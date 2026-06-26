@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+REPO="${LF_REPO:-$HOME/openclaw_training/open_source/local-focus-os}"
+SYSTEM_LIB="$HOME/.local/share/local-focus-os/library"
+PROJECT_LIB="$HOME/openclaw_training/system_library/local-focus-os"
+REPORT_DIR="$HOME/.local/share/local-focus-os/reports"
+LOG_DIR="$HOME/.local/share/local-focus-os/logs"
+
+mkdir -p "$SYSTEM_LIB" "$PROJECT_LIB" "$REPORT_DIR" "$LOG_DIR"
+
+cmd="${1:-status}"
+
+refresh_library() {
+  mkdir -p "$SYSTEM_LIB/docs" "$PROJECT_LIB/docs"
+
+  if [[ -d "$REPO/docs" ]]; then
+    cp -a "$REPO"/docs/*.md "$SYSTEM_LIB/docs/" 2>/dev/null || true
+    cp -a "$REPO"/docs/*.md "$PROJECT_LIB/docs/" 2>/dev/null || true
+  fi
+
+  for f in README.md README_DE.md ROADMAP.md SECURITY.md CONTRIBUTING.md LICENSE; do
+    if [[ -f "$REPO/$f" ]]; then
+      cp -a "$REPO/$f" "$SYSTEM_LIB/" 2>/dev/null || true
+      cp -a "$REPO/$f" "$PROJECT_LIB/" 2>/dev/null || true
+    fi
+  done
+
+  cat > "$SYSTEM_LIB/INDEX.md" << EOF2
+# Local Focus OS Systembibliothek
+
+## Pfade
+
+- Systembibliothek: $SYSTEM_LIB
+- Projektbibliothek: $PROJECT_LIB
+- Repo: $REPO
+- Reports: $REPORT_DIR
+- Logs: $LOG_DIR
+
+## Hauptdokumente
+
+- README.md
+- README_DE.md
+- ROADMAP.md
+- docs/INSTALL.md
+- docs/AUTONOMY.md
+- docs/SCHEDULED_WORKFLOWS.md
+- docs/REPRODUCIBLE_WORKFLOWS.md
+- docs/PDF_METADATA_WORKFLOW.md
+- docs/ELIZA_EFFECT.md
+- docs/AI_GOVERNANCE.md
+- docs/RECRUITER_SUMMARY.md
+- docs/PROFILE_ANALYSIS_DANIEL_MASSA.md
+- docs/VALIDATION_v0.1.0.md
+
+## Betriebsbefehle
+
+\`\`\`bash
+lf-status
+lf-autonomy status
+lf-schedule status
+lf-schedule logs
+lf-repro-check
+lf-pdf-meta-scan ~/Downloads 10
+\`\`\`
+
+## Sicherheitsgrenzen
+
+- keine automatischen E-Mails
+- keine automatischen GitHub-Pushes
+- keine automatische Datei-Löschung
+- keine PDF-Veränderung
+- externe Aktionen nur nach Human Review
+EOF2
+
+  cp -a "$SYSTEM_LIB/INDEX.md" "$PROJECT_LIB/INDEX.md"
+}
+
+case "$cmd" in
+  status)
+    echo "==== LOCAL FOCUS OS SYSTEMBIBLIOTHEK ===="
+    date
+    echo
+    echo "Systembibliothek: $SYSTEM_LIB"
+    echo "Projektbibliothek: $PROJECT_LIB"
+    echo "Repo: $REPO"
+    echo
+    echo "== Dateien Systembibliothek =="
+    find "$SYSTEM_LIB" -maxdepth 2 -type f | sort || true
+    ;;
+
+  refresh)
+    refresh_library
+    echo "[OK] Bibliothek aktualisiert"
+    echo "Systembibliothek: $SYSTEM_LIB"
+    echo "Projektbibliothek: $PROJECT_LIB"
+    ;;
+
+  open)
+    refresh_library
+    xdg-open "$SYSTEM_LIB" >/dev/null 2>&1 || echo "$SYSTEM_LIB"
+    ;;
+
+  index)
+    refresh_library
+    cat "$SYSTEM_LIB/INDEX.md"
+    ;;
+
+  reports)
+    echo "Reports: $REPORT_DIR"
+    find "$REPORT_DIR" -maxdepth 1 -type f | sort | tail -n 30 || true
+    ;;
+
+  logs)
+    echo "Logs: $LOG_DIR"
+    find "$LOG_DIR" -maxdepth 1 -type f | sort || true
+    ;;
+
+  *)
+    cat << HELP
+Usage:
+  lf-library status
+  lf-library refresh
+  lf-library open
+  lf-library index
+  lf-library reports
+  lf-library logs
+HELP
+    ;;
+esac

@@ -158,3 +158,16 @@ Control:
     lf-schedule on
     lf-schedule status
     lf-schedule off
+
+System Library
+
+Local Focus OS keeps a local system library for stable documentation, runbooks and validation evidence.
+
+Documentation: docs/SYSTEM_LIBRARY.md
+
+Commands:
+
+lf-library refresh
+lf-library status
+lf-library index
+

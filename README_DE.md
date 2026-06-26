@@ -125,3 +125,16 @@ Steuerung:
     lf-schedule on
     lf-schedule status
     lf-schedule off
+
+Systembibliothek
+
+Local Focus OS speichert stabile Dokumentation, Runbooks und Validierungsnachweise zusätzlich in einer lokalen Systembibliothek.
+
+Dokumentation: docs/SYSTEM_LIBRARY.md
+
+Befehle:
+
+lf-library refresh
+lf-library status
+lf-library index
+
