@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+REPO="${1:-$HOME/openclaw_training/open_source/local-focus-os}"
+TS="$(date +%Y%m%d_%H%M%S)"
+REPORT_DIR="$HOME/.local/share/local-focus-os/reports"
+OUT="$REPORT_DIR/repro_check_$TS.md"
+
+mkdir -p "$REPORT_DIR"
+
+PASS=0
+WARN=0
+FAIL=0
+
+ok(){ echo "[OK] $*" | tee -a "$OUT"; PASS=$((PASS+1)); }
+warn(){ echo "[WARN] $*" | tee -a "$OUT"; WARN=$((WARN+1)); }
+fail(){ echo "[FAIL] $*" | tee -a "$OUT"; FAIL=$((FAIL+1)); }
+
+{
+echo "# Local Focus OS Reproducibility Check"
+echo
+echo "- Datum: $(date)"
+echo "- Repo: $REPO"
+echo "- Modus: read-only check"
+echo
+} > "$OUT"
+
+echo "==== LOCAL FOCUS OS REPRO CHECK ===="
+date
+echo
+
+if [[ ! -d "$REPO/.git" ]]; then
+  fail "Repo nicht gefunden: $REPO"
+  exit 1
+fi
+
+cd "$REPO"
+export PATH="$HOME/.local/bin:$PATH"
+hash -r || true
+
+echo >> "$OUT"
+echo "## Git" >> "$OUT"
+git status >> "$OUT" 2>&1 || true
+
+if [[ -z "$(git status --porcelain)" ]]; then
+  ok "Git Arbeitsverzeichnis sauber"
+else
+  fail "Git Arbeitsverzeichnis nicht sauber"
+  git status --short | tee -a "$OUT"
+fi
+
+if git tag | grep -qx "v0.1.0"; then
+  ok "Release Tag v0.1.0 vorhanden"
+else
+  warn "Release Tag v0.1.0 fehlt"
+fi
+
+echo >> "$OUT"
+echo "## Bash Syntax" >> "$OUT"
+
+for f in setup.sh uninstall.sh bin/lf-*; do
+  if [[ -f "$f" ]]; then
+    if bash -n "$f"; then
+      ok "Syntax OK: $f"
+    else
+      fail "Syntax Fehler: $f"
+    fi
+  fi
+done
+
+echo >> "$OUT"
+echo "## Commands" >> "$OUT"
+
+for cmd in lf-status lf-task lf-run lf-evening lf-autonomy lf-autonomy-run lf-secret-scan lf-pdf-meta-scan; do
+  if command -v "$cmd" >/dev/null 2>&1; then
+    ok "Command vorhanden: $cmd"
+  else
+    warn "Command fehlt im PATH: $cmd"
+  fi
+done
+
+echo >> "$OUT"
+echo "## Function Tests" >> "$OUT"
+
+if command -v lf-status >/dev/null 2>&1 && lf-status >/tmp/lf_repro_status.log 2>&1; then
+  ok "lf-status funktioniert"
+else
+  warn "lf-status nicht testbar"
+fi
+
+if command -v lf-task >/dev/null 2>&1 && echo "authority documents check, housing organize, local workflow document" | lf-task >/tmp/lf_repro_task.log 2>&1; then
+  ok "lf-task funktioniert"
+else
+  warn "lf-task nicht testbar"
+fi
+
+if command -v lf-autonomy >/dev/null 2>&1 && lf-autonomy status >/tmp/lf_repro_autonomy.log 2>&1; then
+  ok "lf-autonomy status funktioniert"
+else
+  warn "lf-autonomy nicht testbar"
+fi
+
+echo >> "$OUT"
+echo "## Timer" >> "$OUT"
+
+if command -v systemctl >/dev/null 2>&1; then
+  systemctl --user list-timers 'lf-autonomy-*' --no-pager >> "$OUT" 2>&1 || true
+
+  for unit in lf-autonomy-healthcheck.timer lf-autonomy-morning.timer lf-autonomy-evening.timer; do
+    if systemctl --user is-active --quiet "$unit"; then
+      ok "Timer aktiv: $unit"
+    else
+      warn "Timer nicht aktiv: $unit"
+    fi
+  done
+else
+  warn "systemctl nicht vorhanden"
+fi
+
+echo >> "$OUT"
+echo "## Secret Scan" >> "$OUT"
+
+if command -v lf-secret-scan >/dev/null 2>&1; then
+  if lf-secret-scan . >> "$OUT" 2>&1; then
+    ok "Secret Scan OK"
+  else
+    fail "Secret Scan meldet Problem"
+  fi
+else
+  warn "lf-secret-scan fehlt"
+fi
+
+echo >> "$OUT"
+echo "## Ergebnis" >> "$OUT"
+echo "PASS=$PASS" >> "$OUT"
+echo "WARN=$WARN" >> "$OUT"
+echo "FAIL=$FAIL" >> "$OUT"
+
+if [[ "$FAIL" -eq 0 ]]; then
+  echo "GESAMTSTATUS: OK" >> "$OUT"
+else
+  echo "GESAMTSTATUS: FEHLER" >> "$OUT"
+fi
+
+echo
+echo "==== RESULT ===="
+echo "PASS=$PASS"
+echo "WARN=$WARN"
+echo "FAIL=$FAIL"
+
+if [[ "$FAIL" -eq 0 ]]; then
+  echo "GESAMTSTATUS: OK"
+else
+  echo "GESAMTSTATUS: FEHLER"
+fi
+
+echo
+echo "Report:"
+echo "$OUT"

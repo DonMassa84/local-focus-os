@@ -104,3 +104,12 @@ Local Focus OS dokumentiert den ELIZA-Effekt als Sicherheitsrisiko in KI-gestüt
 Das System behandelt KI-Ausgaben nicht als geprüfte Wahrheit und nicht als autonome Entscheidungsinstanz.
 
 Dokumentation: docs/ELIZA_EFFECT.md
+
+Reproduzierbare Workflows
+
+Local Focus OS macht Workflows reproduzierbar, indem Befehle unter bin/lf-* gespeichert, unter docs/ dokumentiert und durch lokale Reports nachvollziehbar gemacht werden.
+
+Dokumentation:
+
+docs/REPRODUCIBLE_WORKFLOWS.md
+docs/PDF_METADATA_WORKFLOW.md

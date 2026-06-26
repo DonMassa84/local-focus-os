@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+TARGET_DIR="${1:-$HOME/Downloads}"
+LIMIT="${2:-20}"
+
+TS="$(date +%Y%m%d_%H%M%S)"
+REPORT_DIR="$HOME/.local/share/local-focus-os/reports"
+OUT="$REPORT_DIR/pdf_metadata_small_$TS.md"
+
+mkdir -p "$REPORT_DIR"
+
+echo "==== LOCAL FOCUS OS PDF METADATA SCAN ===="
+date
+echo
+
+if [[ ! -d "$TARGET_DIR" ]]; then
+  echo "FEHLER: Zielordner nicht gefunden: $TARGET_DIR"
+  echo
+  echo "Usage:"
+  echo "  lf-pdf-meta-scan [folder] [limit]"
+  echo
+  echo "Example:"
+  echo "  lf-pdf-meta-scan ~/Downloads 10"
+  exit 1
+fi
+
+if ! command -v pdfinfo >/dev/null 2>&1; then
+  echo "FEHLER: pdfinfo fehlt."
+  echo "Installieren:"
+  echo "  sudo apt update && sudo apt install -y poppler-utils"
+  exit 1
+fi
+
+TMP="$(mktemp)"
+trap 'rm -f "$TMP"' EXIT
+
+find "$TARGET_DIR" \
+  -maxdepth 2 \
+  -type f \
+  \( -iname "*.pdf" -o -iname "*.PDF" \) \
+  -printf '%T@ %p\n' 2>/dev/null \
+  | sort -nr \
+  | head -n "$LIMIT" \
+  | cut -d' ' -f2- > "$TMP"
+
+COUNT="$(wc -l < "$TMP" | tr -d ' ')"
+
+{
+echo "# PDF Metadata Small Scan"
+echo
+echo "- Datum: $(date)"
+echo "- Zielordner: $TARGET_DIR"
+echo "- Limit: $LIMIT"
+echo "- Gefundene PDFs: $COUNT"
+echo "- Modus: read-only"
+echo
+echo "| Nr | Datei | Größe | Seiten | Author | Creator | Warnung |"
+echo "|---:|---|---:|---:|---|---|---|"
+} > "$OUT"
+
+i=0
+
+while IFS= read -r file; do
+  [[ -n "$file" ]] || continue
+  i=$((i+1))
+
+  INFO="$(pdfinfo "$file" 2>&1 || true)"
+  SIZE="$(du -h "$file" 2>/dev/null | awk '{print $1}')"
+  PAGES="$(printf "%s\n" "$INFO" | awk -F: '$1=="Pages"{sub(/^[ \t]+/,"",$2); print $2; exit}')"
+  AUTHOR="$(printf "%s\n" "$INFO" | awk -F: '$1=="Author"{sub(/^[ \t]+/,"",$2); print $2; exit}')"
+  CREATOR="$(printf "%s\n" "$INFO" | awk -F: '$1=="Creator"{sub(/^[ \t]+/,"",$2); print $2; exit}')"
+
+  WARN="OK"
+
+  if printf "%s\n" "$INFO" | grep -qiE 'incorrect password|syntax error|damaged|error'; then
+    WARN="PDF-Warnung"
+  fi
+
+  if printf "%s\n" "$file $AUTHOR $CREATOR" | grep -qiE 'daniel|massa|jobcenter|gericht|amtsgericht|aok|krank|medizin|proton|gmail|stuttgart|hausenring|hackstraße|hackstrasse'; then
+    if [[ "$WARN" == "OK" ]]; then
+      WARN="sensibel prüfen"
+    else
+      WARN="$WARN; sensibel prüfen"
+    fi
+  fi
+
+  SAFE_FILE="${file/#$HOME/~}"
+
+  echo "| $i | \`$SAFE_FILE\` | ${SIZE:-?} | ${PAGES:-?} | ${AUTHOR:-} | ${CREATOR:-} | $WARN |" >> "$OUT"
+
+done < "$TMP"
+
+echo
+echo "==== FERTIG ===="
+echo "Report:"
+echo "$OUT"
+echo
+cat "$OUT"

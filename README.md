@@ -137,3 +137,12 @@ Local Focus OS explicitly documents the ELIZA effect as a workflow safety risk.
 The system does not treat AI output as verified truth or autonomous authority.
 
 Documentation: docs/ELIZA_EFFECT.md
+
+Reproducible Workflows
+
+Local Focus OS keeps workflows reproducible by storing executable commands in bin/lf-*, documenting them in docs/, and writing local reports.
+
+Documentation:
+
+docs/REPRODUCIBLE_WORKFLOWS.md
+docs/PDF_METADATA_WORKFLOW.md
