@@ -25,26 +25,37 @@ Local Focus OS is a local-first, open-source execution system for brain dumps, t
 
 ## Install
 
-```bash
-chmod +x install.sh
-./install.sh
-source ~/.bashrc
-lf-status
-Usage
-lf-run
-echo "housing, authority documents, project documentation, exam drill" | lf-run custom
-lf-evening
-lf-status
-Commands
-Command	Purpose
-lf-task	Convert brain dump into deterministic task list
-lf-run	Create full workflow session
-lf-ai	Local Ollama wrapper
-lf-email	Clean rough email draft locally
-lf-morning	Morning workflow
-lf-evening	Evening review
-lf-status	Status check
-lf-secret-scan	Basic secret/privacy scan
-License
+    chmod +x install.sh
+    ./install.sh
+    source ~/.bashrc
+    lf-status
+
+## Usage
+
+    lf-run
+    echo "housing, authority documents, project documentation, exam drill" | lf-run custom
+    lf-evening
+    lf-status
+
+## Commands
+
+| Command | Purpose |
+|---|---|
+| lf-task | Convert brain dump into deterministic task list |
+| lf-run | Create full workflow session |
+| lf-ai | Local Ollama wrapper |
+| lf-email | Clean rough email draft locally |
+| lf-morning | Morning workflow |
+| lf-evening | Evening review |
+| lf-status | Status check |
+| lf-secret-scan | Basic secret/privacy scan |
+
+## Safety
+
+Local Focus OS does not send emails automatically, does not push to GitHub automatically, and does not verify facts by itself.
+
+Human review is required before publishing, sending, submitting or sharing anything.
+
+## License
 
 MIT

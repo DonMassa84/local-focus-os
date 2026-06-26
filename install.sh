@@ -10,12 +10,17 @@ SYSTEMD_USER="$HOME/.config/systemd/user"
 mkdir -p "$BIN_DEST" "$DATA_HOME" "$SYSTEMD_USER"
 
 for f in "$BIN_SRC"/lf-*; do
-ln -sf "$f" "$BIN_DEST/$(basename "$f")"
+  ln -sf "$f" "$BIN_DEST/$(basename "$f")"
+  chmod +x "$f"
 done
 
 if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' "$HOME/.bashrc"; then
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
+  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
 fi
+
+systemctl --user disable --now lf-morning.timer lf-evening.timer >/dev/null 2>&1 || true
+rm -f "$SYSTEMD_USER/lf-morning.service" "$SYSTEMD_USER/lf-morning.timer"
+rm -f "$SYSTEMD_USER/lf-evening.service" "$SYSTEMD_USER/lf-evening.timer"
 
 cat > "$SYSTEMD_USER/lf-morning.service" << SERVICE
 [Unit]
@@ -23,7 +28,7 @@ Description=Local Focus OS Morning Workflow
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash -lc '$BIN_DEST/lf-morning'
+ExecStart=%h/.local/bin/lf-morning
 SERVICE
 
 cat > "$SYSTEMD_USER/lf-morning.timer" << TIMER
@@ -31,7 +36,7 @@ cat > "$SYSTEMD_USER/lf-morning.timer" << TIMER
 Description=Run Local Focus OS Morning Workflow
 
 [Timer]
-OnCalendar=--* 08:05:00
+OnCalendar=*-*-* 08:05:00
 Persistent=true
 
 [Install]
@@ -44,7 +49,7 @@ Description=Local Focus OS Evening Review
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash -lc '$BIN_DEST/lf-evening'
+ExecStart=%h/.local/bin/lf-evening
 SERVICE
 
 cat > "$SYSTEMD_USER/lf-evening.timer" << TIMER
@@ -52,7 +57,7 @@ cat > "$SYSTEMD_USER/lf-evening.timer" << TIMER
 Description=Run Local Focus OS Evening Review
 
 [Timer]
-OnCalendar=--* 19:30:00
+OnCalendar=*-*-* 19:30:00
 Persistent=true
 
 [Install]
@@ -60,10 +65,11 @@ WantedBy=timers.target
 TIMER
 
 systemctl --user daemon-reload
+systemctl --user reset-failed >/dev/null 2>&1 || true
 systemctl --user enable --now lf-morning.timer lf-evening.timer
 
 echo "[OK] Local Focus OS installed."
 echo "Run:"
-echo " source ~/.bashrc"
-echo " lf-status"
-echo " lf-run"
+echo "  source ~/.bashrc"
+echo "  lf-status"
+echo "  lf-run"
