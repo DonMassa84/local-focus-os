@@ -6,13 +6,13 @@
     cd local-focus-os
     ./install.sh
 
-## Einzeiler
+## Empfohlener Einzeiler
 
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/DonMassa84/local-focus-os/main/install.sh)"
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/DonMassa84/local-focus-os/main/bootstrap.sh)"
 
 ## Alternative mit wget
 
-    bash -c "$(wget -qO- https://raw.githubusercontent.com/DonMassa84/local-focus-os/main/install.sh)"
+    bash -c "$(wget -qO- https://raw.githubusercontent.com/DonMassa84/local-focus-os/main/bootstrap.sh)"
 
 ## Nach der Installation
 
