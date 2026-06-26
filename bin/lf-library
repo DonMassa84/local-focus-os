@@ -7,71 +7,79 @@ PROJECT_LIB="$HOME/openclaw_training/system_library/local-focus-os"
 REPORT_DIR="$HOME/.local/share/local-focus-os/reports"
 LOG_DIR="$HOME/.local/share/local-focus-os/logs"
 
-mkdir -p "$SYSTEM_LIB" "$PROJECT_LIB" "$REPORT_DIR" "$LOG_DIR"
+mkdir -p "$SYSTEM_LIB/docs" "$PROJECT_LIB/docs" "$REPORT_DIR" "$LOG_DIR"
 
 cmd="${1:-status}"
 
 refresh_library() {
+  cd "$REPO"
+
   mkdir -p "$SYSTEM_LIB/docs" "$PROJECT_LIB/docs"
 
-  if [[ -d "$REPO/docs" ]]; then
-    cp -a "$REPO"/docs/*.md "$SYSTEM_LIB/docs/" 2>/dev/null || true
-    cp -a "$REPO"/docs/*.md "$PROJECT_LIB/docs/" 2>/dev/null || true
-  fi
-
-  for f in README.md README_DE.md ROADMAP.md SECURITY.md CONTRIBUTING.md LICENSE; do
-    if [[ -f "$REPO/$f" ]]; then
-      cp -a "$REPO/$f" "$SYSTEM_LIB/" 2>/dev/null || true
-      cp -a "$REPO/$f" "$PROJECT_LIB/" 2>/dev/null || true
+  for f in README.md README_DE.md ROADMAP.md PROJECT_STATUS.md SECURITY.md CONTRIBUTING.md LICENSE; do
+    if [[ -f "$f" ]]; then
+      cp -a "$f" "$SYSTEM_LIB/" 2>/dev/null || true
+      cp -a "$f" "$PROJECT_LIB/" 2>/dev/null || true
     fi
   done
 
-  cat > "$SYSTEM_LIB/INDEX.md" << EOF2
-# Local Focus OS Systembibliothek
+  cp -a docs/*.md "$SYSTEM_LIB/docs/" 2>/dev/null || true
+  cp -a docs/*.md "$PROJECT_LIB/docs/" 2>/dev/null || true
 
-## Pfade
-
-- Systembibliothek: $SYSTEM_LIB
-- Projektbibliothek: $PROJECT_LIB
-- Repo: $REPO
-- Reports: $REPORT_DIR
-- Logs: $LOG_DIR
-
-## Hauptdokumente
-
-- README.md
-- README_DE.md
-- ROADMAP.md
-- docs/INSTALL.md
-- docs/AUTONOMY.md
-- docs/SCHEDULED_WORKFLOWS.md
-- docs/REPRODUCIBLE_WORKFLOWS.md
-- docs/PDF_METADATA_WORKFLOW.md
-- docs/ELIZA_EFFECT.md
-- docs/AI_GOVERNANCE.md
-- docs/RECRUITER_SUMMARY.md
-- docs/PROFILE_ANALYSIS_DANIEL_MASSA.md
-- docs/VALIDATION_v0.1.0.md
-
-## Betriebsbefehle
-
-\`\`\`bash
-lf-status
-lf-autonomy status
-lf-schedule status
-lf-schedule logs
-lf-repro-check
-lf-pdf-meta-scan ~/Downloads 10
-\`\`\`
-
-## Sicherheitsgrenzen
-
-- keine automatischen E-Mails
-- keine automatischen GitHub-Pushes
-- keine automatische Datei-Löschung
-- keine PDF-Veränderung
-- externe Aktionen nur nach Human Review
-EOF2
+  {
+    echo "# Local Focus OS Systembibliothek"
+    echo
+    echo "## Pfade"
+    echo
+    echo "- Systembibliothek: $SYSTEM_LIB"
+    echo "- Projektbibliothek: $PROJECT_LIB"
+    echo "- Repo: $REPO"
+    echo "- Reports: $REPORT_DIR"
+    echo "- Logs: $LOG_DIR"
+    echo
+    echo "## Zentrale Register"
+    echo
+    echo "- docs/WORKFLOW_REGISTRY.md"
+    echo "- docs/DOCUMENT_REGISTRY.md"
+    echo "- docs/OPERATIONS_INDEX.md"
+    echo
+    echo "## Hauptdokumente"
+    echo
+    find "$SYSTEM_LIB" -maxdepth 1 -type f \( -name '*.md' -o -name 'LICENSE' \) -printf '- %f\n' | sort || true
+    echo
+    echo "## Dokumentation"
+    echo
+    find "$SYSTEM_LIB/docs" -maxdepth 1 -type f -name '*.md' -printf '- docs/%f\n' | sort || true
+    echo
+    echo "## Workflows"
+    echo
+    if [[ -d "$REPO/bin" ]]; then
+      find "$REPO/bin" -maxdepth 1 -type f -name 'lf-*' -printf '- %f\n' | sort || true
+    fi
+    echo
+    echo "## Betriebsbefehle"
+    echo
+    echo "\`\`\`bash"
+    echo "lf-status"
+    echo "lf-autonomy status"
+    echo "lf-schedule status"
+    echo "lf-schedule logs"
+    echo "lf-inventory status"
+    echo "lf-inventory refresh"
+    echo "lf-library index"
+    echo "lf-repro-check"
+    echo "lf-secret-scan ."
+    echo "lf-pdf-meta-scan ~/Downloads 10"
+    echo "\`\`\`"
+    echo
+    echo "## Sicherheitsgrenzen"
+    echo
+    echo "- keine automatischen E-Mails"
+    echo "- keine automatischen GitHub-Pushes"
+    echo "- keine automatische Datei-Löschung"
+    echo "- keine PDF-Veränderung"
+    echo "- externe Aktionen nur nach Human Review"
+  } > "$SYSTEM_LIB/INDEX.md"
 
   cp -a "$SYSTEM_LIB/INDEX.md" "$PROJECT_LIB/INDEX.md"
 }
@@ -85,6 +93,15 @@ case "$cmd" in
     echo "Projektbibliothek: $PROJECT_LIB"
     echo "Repo: $REPO"
     echo
+    echo "== Zentrale Register =="
+    for f in WORKFLOW_REGISTRY.md DOCUMENT_REGISTRY.md OPERATIONS_INDEX.md; do
+      if [[ -f "$SYSTEM_LIB/docs/$f" ]]; then
+        echo "[OK] docs/$f"
+      else
+        echo "[FEHLT] docs/$f"
+      fi
+    done
+    echo
     echo "== Dateien Systembibliothek =="
     find "$SYSTEM_LIB" -maxdepth 2 -type f | sort || true
     ;;
@@ -96,14 +113,14 @@ case "$cmd" in
     echo "Projektbibliothek: $PROJECT_LIB"
     ;;
 
-  open)
-    refresh_library
-    xdg-open "$SYSTEM_LIB" >/dev/null 2>&1 || echo "$SYSTEM_LIB"
-    ;;
-
   index)
     refresh_library
     cat "$SYSTEM_LIB/INDEX.md"
+    ;;
+
+  open)
+    refresh_library
+    xdg-open "$SYSTEM_LIB" >/dev/null 2>&1 || echo "$SYSTEM_LIB"
     ;;
 
   reports)
@@ -121,8 +138,8 @@ case "$cmd" in
 Usage:
   lf-library status
   lf-library refresh
-  lf-library open
   lf-library index
+  lf-library open
   lf-library reports
   lf-library logs
 HELP
