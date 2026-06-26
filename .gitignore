@@ -19,3 +19,5 @@ pycache/
 .DS_Store
 .repair_backup_*/
 main
+%h/
+/local-focus-os/
