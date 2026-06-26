@@ -20,6 +20,7 @@ Dieses Dokument listet alle zentralen Dokumente des Local-Focus-OS-Projekts.
 | `docs/DOCUMENT_REGISTRY.md` | Dokumenten-Register |
 | `docs/ELIZA_EFFECT.md` | Dokumentation |
 | `docs/INSTALL.md` | Dokumentation |
+| `docs/OPERATIONS_INDEX.md` | Betriebsindex |
 | `docs/PDF_METADATA_WORKFLOW.md` | PDF-Metadaten-Workflow |
 | `docs/PROFILE_ANALYSIS_DANIEL_MASSA.md` | Dokumentation |
 | `docs/RECRUITER_SUMMARY.md` | Dokumentation |
