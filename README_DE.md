@@ -96,3 +96,11 @@ Schwerpunkte:
 - technische Dokumentation
 - Human-in-the-loop Automation
 - datenschutzbewusste Toolentwicklung
+
+## ELIZA-Effekt
+
+Local Focus OS dokumentiert den ELIZA-Effekt als Sicherheitsrisiko in KI-gestützten Workflows.
+
+Das System behandelt KI-Ausgaben nicht als geprüfte Wahrheit und nicht als autonome Entscheidungsinstanz.
+
+Dokumentation: docs/ELIZA_EFFECT.md

@@ -129,3 +129,11 @@ Focus areas:
 - documentation engineering
 - human-in-the-loop automation
 - privacy-aware tooling
+
+## ELIZA Effect Awareness
+
+Local Focus OS explicitly documents the ELIZA effect as a workflow safety risk.
+
+The system does not treat AI output as verified truth or autonomous authority.
+
+Documentation: docs/ELIZA_EFFECT.md

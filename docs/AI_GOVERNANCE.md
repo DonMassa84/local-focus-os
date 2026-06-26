@@ -39,3 +39,19 @@ echo "authority document follow-up, project documentation" | lf-run custom
 lf-secret-scan .
 git status
 
+
+## ELIZA-Effekt
+
+Der ELIZA-Effekt ist ein relevantes Risiko für Local Focus OS.
+
+KI-Ausgaben dürfen nicht als geprüfte Wahrheit, menschliches Verständnis oder autonome Entscheidungsgrundlage behandelt werden.
+
+Schutzmaßnahmen:
+
+- deterministische Regeln für Aufgabenrouting
+- lokale Reports statt direkter externer Aktionen
+- Secret Scan vor Veröffentlichung
+- Human Review bei E-Mails, Behördenkommunikation, Bewerbungen, GitHub-Pushes und sensiblen Dokumenten
+- keine automatischen Bestätigungen, Fristannahmen oder externen Behauptungen
+
+Siehe auch: docs/ELIZA_EFFECT.md
