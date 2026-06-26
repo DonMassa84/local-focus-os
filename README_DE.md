@@ -22,12 +22,27 @@ Keine Halluzination bei kritischen Aufgaben.
 - Secret-Scan vor Veröffentlichung
 - systemd User Timer
 
-## Beispiel
+## Installation
 
 ```bash
+chmod +x install.sh
+./install.sh
+source ~/.bashrc
+lf-status
+Beispiel
 echo "housing, authority documents, project documentation, exam drill" | lf-run custom
 Sicherheitsprinzip
 
 KI unterstützt Sprache.
 Regeln steuern Ausführung.
 Private Daten bleiben lokal.
+
+Warum lokal?
+keine Pflicht zur Cloud-Nutzung
+keine versteckte Telemetrie
+bessere Kontrolle über sensible Daten
+nachvollziehbare Bash- und Markdown-Struktur
+geeignet für Linux Mint und Ubuntu
+Status
+
+Veröffentlicht als Open-Source-Projekt unter MIT-Lizenz.
