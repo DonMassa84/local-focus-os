@@ -191,3 +191,9 @@ Dokumentation:
 
 - docs/INSTALL_FROM_REPO.md
 - docs/INSTALL_RELEASE.md
+
+## Case Study
+
+Eine Portfolio-Case-Study ist hier verfügbar:
+
+docs/CASE_STUDY_LOCAL_FOCUS_OS.md
