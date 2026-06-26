@@ -1,0 +1,232 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+export PATH="$HOME/.local/bin:$PATH"
+
+CONFIG_DIR="$HOME/.config/local-focus-os"
+CONFIG="$CONFIG_DIR/schedule.env"
+SYSTEMD_USER="$HOME/.config/systemd/user"
+DATA_DIR="${LF_HOME:-$HOME/.local/share/local-focus-os}"
+LOG_DIR="$DATA_DIR/logs"
+
+mkdir -p "$CONFIG_DIR" "$SYSTEMD_USER" "$LOG_DIR"
+
+cmd="${1:-status}"
+
+write_default_config() {
+  if [[ ! -f "$CONFIG" ]]; then
+    cat > "$CONFIG" << EOF2
+LF_SCHEDULE_ENABLED=true
+LF_PDF_SCAN_DIR=$HOME/Downloads
+LF_PDF_SCAN_LIMIT=10
+LF_DAILY_REPRO_TIME=20:40:00
+LF_DAILY_PDF_TIME=21:05:00
+LF_WEEKLY_AUDIT_TIME=Sun 10:30:00
+LF_MONTHLY_SNAPSHOT_TIME=*-*-01 09:30:00
+EOF2
+  fi
+}
+
+set_enabled() {
+  local value="$1"
+  write_default_config
+  if grep -q '^LF_SCHEDULE_ENABLED=' "$CONFIG"; then
+    sed -i "s/^LF_SCHEDULE_ENABLED=.*/LF_SCHEDULE_ENABLED=$value/" "$CONFIG"
+  else
+    echo "LF_SCHEDULE_ENABLED=$value" >> "$CONFIG"
+  fi
+}
+
+install_units() {
+  write_default_config
+
+  cat > "$SYSTEMD_USER/lf-scheduled-repro.service" << SERVICE
+[Unit]
+Description=Local Focus OS Scheduled Repro Check
+
+[Service]
+Type=oneshot
+EnvironmentFile=-%h/.config/local-focus-os/schedule.env
+ExecStart=%h/.local/bin/lf-scheduled-run repro
+SERVICE
+
+  cat > "$SYSTEMD_USER/lf-scheduled-repro.timer" << TIMER
+[Unit]
+Description=Run Local Focus OS Repro Check Daily
+
+[Timer]
+OnCalendar=*-*-* 20:40:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+TIMER
+
+  cat > "$SYSTEMD_USER/lf-scheduled-pdf.service" << SERVICE
+[Unit]
+Description=Local Focus OS Scheduled PDF Metadata Scan
+
+[Service]
+Type=oneshot
+EnvironmentFile=-%h/.config/local-focus-os/schedule.env
+ExecStart=%h/.local/bin/lf-scheduled-run pdf
+SERVICE
+
+  cat > "$SYSTEMD_USER/lf-scheduled-pdf.timer" << TIMER
+[Unit]
+Description=Run Local Focus OS PDF Metadata Scan Daily
+
+[Timer]
+OnCalendar=*-*-* 21:05:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+TIMER
+
+  cat > "$SYSTEMD_USER/lf-scheduled-weekly.service" << SERVICE
+[Unit]
+Description=Local Focus OS Scheduled Weekly Audit
+
+[Service]
+Type=oneshot
+EnvironmentFile=-%h/.config/local-focus-os/schedule.env
+ExecStart=%h/.local/bin/lf-scheduled-run weekly
+SERVICE
+
+  cat > "$SYSTEMD_USER/lf-scheduled-weekly.timer" << TIMER
+[Unit]
+Description=Run Local Focus OS Weekly Audit
+
+[Timer]
+OnCalendar=Sun 10:30:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+TIMER
+
+  cat > "$SYSTEMD_USER/lf-scheduled-monthly.service" << SERVICE
+[Unit]
+Description=Local Focus OS Scheduled Monthly Snapshot
+
+[Service]
+Type=oneshot
+EnvironmentFile=-%h/.config/local-focus-os/schedule.env
+ExecStart=%h/.local/bin/lf-scheduled-run monthly
+SERVICE
+
+  cat > "$SYSTEMD_USER/lf-scheduled-monthly.timer" << TIMER
+[Unit]
+Description=Run Local Focus OS Monthly Snapshot
+
+[Timer]
+OnCalendar=*-*-01 09:30:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+TIMER
+
+  systemctl --user daemon-reload
+}
+
+case "$cmd" in
+  on)
+    set_enabled true
+    install_units
+    systemctl --user enable --now \
+      lf-scheduled-repro.timer \
+      lf-scheduled-pdf.timer \
+      lf-scheduled-weekly.timer \
+      lf-scheduled-monthly.timer
+    echo "[OK] Scheduled workflows aktiviert"
+    systemctl --user list-timers 'lf-scheduled-*' --no-pager
+    ;;
+
+  off)
+    set_enabled false
+    systemctl --user disable --now \
+      lf-scheduled-repro.timer \
+      lf-scheduled-pdf.timer \
+      lf-scheduled-weekly.timer \
+      lf-scheduled-monthly.timer >/dev/null 2>&1 || true
+    echo "[OK] Scheduled workflows deaktiviert"
+    systemctl --user list-timers 'lf-scheduled-*' --no-pager || true
+    ;;
+
+  status)
+    write_default_config
+    echo "==== LOCAL FOCUS OS SCHEDULE STATUS ===="
+    date
+    echo
+    echo "== Config =="
+    cat "$CONFIG"
+    echo
+    echo "== Timers =="
+    systemctl --user list-timers 'lf-scheduled-*' 'lf-autonomy-*' --no-pager || true
+    echo
+    echo "== Units =="
+    systemctl --user status \
+      lf-scheduled-repro.timer \
+      lf-scheduled-pdf.timer \
+      lf-scheduled-weekly.timer \
+      lf-scheduled-monthly.timer \
+      --no-pager || true
+    ;;
+
+  run)
+    shift || true
+    lf-scheduled-run "${1:-status}"
+    ;;
+
+  logs)
+    LOG="$LOG_DIR/scheduled_workflows.log"
+    if [[ -f "$LOG" ]]; then
+      tail -n 100 "$LOG"
+    else
+      echo "No log yet: $LOG"
+    fi
+    ;;
+
+  pdf-dir)
+    write_default_config
+    dir="${2:-$HOME/Downloads}"
+    limit="${3:-10}"
+    if [[ ! -d "$dir" ]]; then
+      echo "FEHLER: Ordner nicht gefunden: $dir"
+      exit 1
+    fi
+    if grep -q '^LF_PDF_SCAN_DIR=' "$CONFIG"; then
+      sed -i "s|^LF_PDF_SCAN_DIR=.*|LF_PDF_SCAN_DIR=$dir|" "$CONFIG"
+    else
+      echo "LF_PDF_SCAN_DIR=$dir" >> "$CONFIG"
+    fi
+    if grep -q '^LF_PDF_SCAN_LIMIT=' "$CONFIG"; then
+      sed -i "s|^LF_PDF_SCAN_LIMIT=.*|LF_PDF_SCAN_LIMIT=$limit|" "$CONFIG"
+    else
+      echo "LF_PDF_SCAN_LIMIT=$limit" >> "$CONFIG"
+    fi
+    echo "[OK] PDF Scan gesetzt:"
+    echo "DIR=$dir"
+    echo "LIMIT=$limit"
+    ;;
+
+  *)
+    cat << HELP
+Usage:
+  lf-schedule on
+  lf-schedule off
+  lf-schedule status
+  lf-schedule logs
+  lf-schedule run [status|repro|pdf|weekly|monthly]
+  lf-schedule pdf-dir ~/Downloads 10
+
+Default timers:
+  daily repro check:       20:40
+  daily PDF metadata scan: 21:05
+  weekly audit:            Sunday 10:30
+  monthly snapshot:        every 1st day 09:30
+HELP
+    ;;
+esac

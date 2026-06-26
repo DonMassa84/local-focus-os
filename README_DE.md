@@ -113,3 +113,15 @@ Dokumentation:
 
 docs/REPRODUCIBLE_WORKFLOWS.md
 docs/PDF_METADATA_WORKFLOW.md
+
+## Regelmäßige automatische Workflows
+
+Local Focus OS kann regelmäßige lokale Workflows über systemd User Timer ausführen.
+
+Dokumentation: docs/SCHEDULED_WORKFLOWS.md
+
+Steuerung:
+
+    lf-schedule on
+    lf-schedule status
+    lf-schedule off

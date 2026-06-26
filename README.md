@@ -146,3 +146,15 @@ Documentation:
 
 docs/REPRODUCIBLE_WORKFLOWS.md
 docs/PDF_METADATA_WORKFLOW.md
+
+## Scheduled Workflows
+
+Local Focus OS includes scheduled local workflows through systemd user timers.
+
+Documentation: docs/SCHEDULED_WORKFLOWS.md
+
+Control:
+
+    lf-schedule on
+    lf-schedule status
+    lf-schedule off

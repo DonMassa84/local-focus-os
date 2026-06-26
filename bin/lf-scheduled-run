@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+export PATH="$HOME/.local/bin:$PATH"
+
+MODE="${1:-status}"
+CONFIG="$HOME/.config/local-focus-os/schedule.env"
+DATA_DIR="${LF_HOME:-$HOME/.local/share/local-focus-os}"
+REPORT_DIR="$DATA_DIR/reports"
+LOG_DIR="$DATA_DIR/logs"
+
+mkdir -p "$REPORT_DIR" "$LOG_DIR"
+
+if [[ -f "$CONFIG" ]]; then
+  # shellcheck disable=SC1090
+  source "$CONFIG" || true
+fi
+
+ENABLED="${LF_SCHEDULE_ENABLED:-true}"
+PDF_SCAN_DIR="${LF_PDF_SCAN_DIR:-$HOME/Downloads}"
+PDF_SCAN_LIMIT="${LF_PDF_SCAN_LIMIT:-10}"
+
+TS="$(date +%Y%m%d_%H%M%S)"
+REPORT="$REPORT_DIR/scheduled_${MODE}_${TS}.md"
+LOG="$LOG_DIR/scheduled_workflows.log"
+
+logline() {
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] mode=$MODE $*" | tee -a "$LOG"
+}
+
+if [[ "$ENABLED" != "true" ]]; then
+  logline "disabled"
+  exit 0
+fi
+
+{
+echo "# Local Focus OS Scheduled Workflow"
+echo
+echo "- Date: $(date)"
+echo "- Mode: $MODE"
+echo "- Host: $(hostname)"
+echo "- User: $(whoami)"
+echo "- Report: $REPORT"
+echo
+echo "## Safety Boundaries"
+echo
+echo "- no automatic email sending"
+echo "- no automatic GitHub push"
+echo "- no automatic file deletion"
+echo "- no PDF modification"
+echo "- local reports only"
+echo
+} > "$REPORT"
+
+case "$MODE" in
+  status)
+    {
+    echo "## Status"
+    echo
+    lf-status 2>&1 || true
+    echo
+    echo "## Autonomy"
+    lf-autonomy status 2>&1 || true
+    } >> "$REPORT"
+    ;;
+
+  repro)
+    {
+    echo "## Reproducibility Check"
+    echo
+    lf-repro-check 2>&1 || true
+    } >> "$REPORT"
+    ;;
+
+  pdf)
+    {
+    echo "## PDF Metadata Small Scan"
+    echo
+    echo "- Directory: $PDF_SCAN_DIR"
+    echo "- Limit: $PDF_SCAN_LIMIT"
+    echo
+    lf-pdf-meta-scan "$PDF_SCAN_DIR" "$PDF_SCAN_LIMIT" 2>&1 || true
+    } >> "$REPORT"
+    ;;
+
+  weekly)
+    {
+    echo "## Weekly Audit"
+    echo
+    echo "### Git"
+    cd "$HOME/openclaw_training/open_source/local-focus-os" 2>/dev/null || true
+    git status 2>&1 || true
+    git log --oneline -8 2>&1 || true
+    echo
+    echo "### Repro Check"
+    lf-repro-check 2>&1 || true
+    echo
+    echo "### Autonomy"
+    lf-autonomy status 2>&1 || true
+    echo
+    echo "### Timers"
+    systemctl --user list-timers 'lf-*' --no-pager 2>&1 || true
+    } >> "$REPORT"
+    ;;
+
+  monthly)
+    {
+    echo "## Monthly Portfolio Snapshot"
+    echo
+    echo "### Git"
+    cd "$HOME/openclaw_training/open_source/local-focus-os" 2>/dev/null || true
+    git status 2>&1 || true
+    git log --oneline -12 2>&1 || true
+    git tag -n 2>&1 || true
+    echo
+    echo "### Project Files"
+    find . -maxdepth 2 -type f \
+      -not -path './.git/*' \
+      -not -path './.repair_backup_*/*' \
+      | sort 2>/dev/null || true
+    echo
+    echo "### Validation"
+    lf-repro-check 2>&1 || true
+    } >> "$REPORT"
+    ;;
+
+  *)
+    {
+    echo "## Error"
+    echo
+    echo "Unknown mode: $MODE"
+    echo
+    echo "Allowed modes:"
+    echo "- status"
+    echo "- repro"
+    echo "- pdf"
+    echo "- weekly"
+    echo "- monthly"
+    } >> "$REPORT"
+    logline "unknown mode"
+    exit 1
+    ;;
+esac
+
+{
+echo
+echo "## Result"
+echo
+echo "Scheduled workflow completed locally."
+echo
+echo "- Report: $REPORT"
+echo "- Log: $LOG"
+} >> "$REPORT"
+
+logline "completed report=$REPORT"
+echo "[OK] Scheduled workflow completed: $MODE"
+echo "Report: $REPORT"
