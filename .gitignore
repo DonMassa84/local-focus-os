@@ -21,3 +21,8 @@ pycache/
 main
 %h/
 /local-focus-os/
+# Release artifacts
+dist/*.tar.gz
+dist/*.sha256
+dist/*.manifest.txt
+dist/*.sbom.txt

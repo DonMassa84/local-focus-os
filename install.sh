@@ -22,17 +22,11 @@ done
 
 echo "[OK] Basisbefehle vorhanden"
 
-if command -v systemctl >/dev/null 2>&1; then
-  echo "[OK] systemctl vorhanden"
-else
-  echo "[WARN] systemctl nicht gefunden. Timer-Funktionen evtl. eingeschränkt."
-fi
-
 echo
 echo "== 2) Repo installieren oder aktualisieren =="
 
 if [[ -d "$INSTALL_ROOT/.git" ]]; then
-  echo "[INFO] Vorhandenes Repo wird aktualisiert: $INSTALL_ROOT"
+  echo "[INFO] Aktualisiere vorhandenes Repo: $INSTALL_ROOT"
   git -C "$INSTALL_ROOT" fetch --all --tags
   git -C "$INSTALL_ROOT" checkout main
   git -C "$INSTALL_ROOT" pull --ff-only || true
@@ -71,7 +65,7 @@ if [[ -x "$INSTALL_ROOT/bin/local-focus-os" ]]; then
   ln -sf "$INSTALL_ROOT/bin/local-focus-os" "$BIN_DIR/local-focus-os"
   echo "[OK] local-focus-os -> $BIN_DIR/local-focus-os"
 else
-  echo "[WARN] bin/local-focus-os nicht gefunden. Basisbefehle lf-* wurden trotzdem installiert."
+  echo "[WARN] bin/local-focus-os fehlt. Basisbefehle lf-* wurden trotzdem installiert."
 fi
 
 echo
@@ -95,7 +89,6 @@ echo
 echo "== 7) Smoke Test =="
 
 command -v lf-status >/dev/null 2>&1 && lf-status || true
-command -v lf-repro-check >/dev/null 2>&1 && lf-repro-check || true
 command -v local-focus-os >/dev/null 2>&1 && local-focus-os version || true
 
 echo

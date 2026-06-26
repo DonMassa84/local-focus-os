@@ -1,9 +1,5 @@
 # Install Release Package
 
-## Zweck
-
-Local Focus OS kann aus einem Release-Paket installiert werden.
-
 ## Release bauen
 
     make build

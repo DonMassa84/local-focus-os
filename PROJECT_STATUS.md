@@ -1,25 +1,41 @@
 # Project Status
 
-Local Focus OS is a published open-source project.
+## Name
 
-## Current State
+Local Focus OS
 
-- Repository created
-- Initial scaffold committed
-- Bash commands implemented
-- systemd user timers implemented
-- Secret scan implemented
-- Ollama integration optional
-- Privacy-first workflow documented
+## Current Version
 
-## Repository
+0.2.0
 
-GitHub: DonMassa84/local-focus-os
+## Status
 
-## Next Steps
+Reproducible local workflow software.
 
-- Add screenshots
-- Add demo GIF
-- Add installation test section
-- Add German README
-- Add roadmap
+## Current Capabilities
+
+- local CLI workflows
+- systemd user timers
+- autonomy mode
+- scheduled reproducibility checks
+- PDF metadata scan
+- system library
+- workflow inventory
+- document inventory
+- operations index
+- local reports
+- local logs
+- secret scan
+- release packaging
+
+## Safety Boundary
+
+No external actions without human review.
+
+Not automatic:
+
+- email sending
+- GitHub pushing
+- file deletion
+- PDF modification
+- authority communication

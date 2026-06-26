@@ -1,9 +1,5 @@
 # Install from Repository
 
-## Zweck
-
-Dieses Dokument beschreibt die Installation von Local Focus OS direkt aus dem GitHub-Repository.
-
 ## Standardinstallation
 
     git clone https://github.com/DonMassa84/local-focus-os.git
@@ -18,12 +14,6 @@ Dieses Dokument beschreibt die Installation von Local Focus OS direkt aus dem Gi
 
     bash -c "$(wget -qO- https://raw.githubusercontent.com/DonMassa84/local-focus-os/main/install.sh)"
 
-## Installation über Makefile
-
-    git clone https://github.com/DonMassa84/local-focus-os.git
-    cd local-focus-os
-    make install
-
 ## Nach der Installation
 
     source ~/.bashrc
@@ -33,11 +23,9 @@ Dieses Dokument beschreibt die Installation von Local Focus OS direkt aus dem Gi
 
 ## Installationspfad
 
-Standardmäßig wird installiert nach:
-
     ~/.local/share/local-focus-os/source
 
-Befehle werden verlinkt nach:
+## Befehle
 
     ~/.local/bin
 

@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+export PATH="$HOME/.local/bin:$PATH"
+
+cmd="${1:-help}"
+shift || true
+
+case "$cmd" in
+  help|-h|--help)
+    cat << HELP
+Local Focus OS
+
+Usage:
+  local-focus-os status
+  local-focus-os autonomy
+  local-focus-os schedule
+  local-focus-os inventory
+  local-focus-os library
+  local-focus-os repro
+  local-focus-os secret
+  local-focus-os pdf [folder] [limit]
+  local-focus-os doctor
+  local-focus-os version
+
+Short aliases after setup:
+  lf-status
+  lf-autonomy status
+  lf-schedule status
+  lf-inventory status
+  lf-library status
+  lf-repro-check
+HELP
+    ;;
+
+  status)
+    lf-status "$@"
+    ;;
+
+  autonomy)
+    lf-autonomy status "$@"
+    ;;
+
+  schedule)
+    lf-schedule status "$@"
+    ;;
+
+  inventory)
+    lf-inventory status "$@"
+    ;;
+
+  library)
+    lf-library status "$@"
+    ;;
+
+  repro)
+    lf-repro-check "$@"
+    ;;
+
+  secret)
+    lf-secret-scan . "$@"
+    ;;
+
+  pdf)
+    lf-pdf-meta-scan "${1:-$HOME/Downloads}" "${2:-10}"
+    ;;
+
+  doctor)
+    echo "==== LOCAL FOCUS OS DOCTOR ===="
+    date
+    echo
+    lf-status
+    echo
+    lf-autonomy status
+    echo
+    lf-schedule status
+    echo
+    lf-inventory status
+    echo
+    lf-library status
+    echo
+    lf-repro-check
+    echo
+    git -C "$HOME/openclaw_training/open_source/local-focus-os" status || true
+    ;;
+
+  version)
+    if [[ -f "$HOME/openclaw_training/open_source/local-focus-os/VERSION" ]]; then
+      cat "$HOME/openclaw_training/open_source/local-focus-os/VERSION"
+    else
+      echo "unknown"
+    fi
+    ;;
+
+  *)
+    echo "Unknown command: $cmd"
+    echo "Run: local-focus-os help"
+    exit 1
+    ;;
+esac
