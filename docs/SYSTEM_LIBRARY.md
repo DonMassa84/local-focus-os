@@ -64,3 +64,18 @@ Merksatz
 Repo ist die Quelle.
 Systembibliothek ist der lokale Wissensspeicher.
 Reports sind der Betriebsnachweis.
+
+## Workflow- und Dokumentenregister
+
+Die Systembibliothek nimmt alle Workflows und Dokumente automatisch auf.
+
+Befehle:
+
+    lf-inventory refresh
+    lf-library refresh
+
+Erzeugte Register:
+
+- docs/WORKFLOW_REGISTRY.md
+- docs/DOCUMENT_REGISTRY.md
+- docs/OPERATIONS_INDEX.md

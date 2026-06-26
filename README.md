@@ -171,3 +171,18 @@ lf-library refresh
 lf-library status
 lf-library index
 
+
+## Workflow and Document Registry
+
+Local Focus OS maintains a generated registry of all workflows and documentation.
+
+Documentation:
+
+- docs/WORKFLOW_REGISTRY.md
+- docs/DOCUMENT_REGISTRY.md
+- docs/OPERATIONS_INDEX.md
+
+Commands:
+
+    lf-inventory refresh
+    lf-inventory status

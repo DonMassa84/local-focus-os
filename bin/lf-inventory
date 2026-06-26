@@ -1,0 +1,265 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+REPO="${LF_REPO:-$HOME/openclaw_training/open_source/local-focus-os}"
+SYSTEM_LIB="$HOME/.local/share/local-focus-os/library"
+PROJECT_LIB="$HOME/openclaw_training/system_library/local-focus-os"
+REPORT_DIR="$HOME/.local/share/local-focus-os/reports"
+LOG_DIR="$HOME/.local/share/local-focus-os/logs"
+
+mkdir -p "$SYSTEM_LIB/docs" "$PROJECT_LIB/docs" "$REPORT_DIR" "$LOG_DIR"
+
+cmd="${1:-status}"
+
+cd "$REPO"
+
+make_workflow_registry() {
+  {
+    echo "# Workflow Registry"
+    echo
+    echo "## Zweck"
+    echo
+    echo "Dieses Dokument listet alle ausführbaren Local-Focus-OS-Workflows."
+    echo
+    echo "## Sicherheitsprinzip"
+    echo
+    echo "- lokale Reports erlaubt"
+    echo "- lokale Logs erlaubt"
+    echo "- systemd Timer erlaubt"
+    echo "- keine automatischen E-Mails"
+    echo "- keine automatischen GitHub-Pushes"
+    echo "- keine automatische Datei-Löschung"
+    echo "- externe Aktionen nur nach Human Review"
+    echo
+    echo "## Workflows"
+    echo
+    echo "| Befehl | Repo-Datei | Installierter Pfad | Status |"
+    echo "|---|---|---|---|"
+
+    find bin -maxdepth 1 -type f -name 'lf-*' | sort | while read -r f; do
+      name="$(basename "$f")"
+      installed="$(command -v "$name" 2>/dev/null || echo "$HOME/.local/bin/$name")"
+      if [[ -x "$f" ]]; then
+        status="executable"
+      else
+        status="not executable"
+      fi
+      echo "| \`$name\` | \`$f\` | \`$installed\` | $status |"
+    done
+
+    echo
+    echo "## Systemd Timer"
+    echo
+    echo "| Unit | Zweck |"
+    echo "|---|---|"
+    echo "| \`lf-autonomy-healthcheck.timer\` | stündlicher Autonomy Healthcheck |"
+    echo "| \`lf-autonomy-morning.timer\` | täglicher Morgenworkflow |"
+    echo "| \`lf-autonomy-evening.timer\` | tägliche Abendkontrolle |"
+    echo "| \`lf-scheduled-repro.timer\` | täglicher Repro-Check |"
+    echo "| \`lf-scheduled-pdf.timer\` | täglicher PDF-Metadaten-Scan |"
+    echo "| \`lf-scheduled-weekly.timer\` | wöchentlicher Audit |"
+    echo "| \`lf-scheduled-monthly.timer\` | monatlicher Snapshot |"
+    echo
+    echo "## Prüfung"
+    echo
+    echo "\`\`\`bash"
+    echo "lf-repro-check"
+    echo "lf-schedule status"
+    echo "lf-autonomy status"
+    echo "lf-library index"
+    echo "\`\`\`"
+  } > docs/WORKFLOW_REGISTRY.md
+}
+
+make_document_registry() {
+  {
+    echo "# Document Registry"
+    echo
+    echo "## Zweck"
+    echo
+    echo "Dieses Dokument listet alle zentralen Dokumente des Local-Focus-OS-Projekts."
+    echo
+    echo "## Dokumente"
+    echo
+    echo "| Dokument | Zweck |"
+    echo "|---|---|"
+
+    for f in README.md README_DE.md ROADMAP.md SECURITY.md CONTRIBUTING.md LICENSE docs/*.md; do
+      [[ -f "$f" ]] || continue
+      case "$f" in
+        README.md) purpose="Englische Projektübersicht" ;;
+        README_DE.md) purpose="Deutsche Projektübersicht" ;;
+        ROADMAP.md) purpose="Projektplanung" ;;
+        SECURITY.md) purpose="Sicherheitsregeln" ;;
+        CONTRIBUTING.md) purpose="Beitragsregeln" ;;
+        LICENSE) purpose="Lizenz" ;;
+        docs/AUTONOMY.md) purpose="Autonomy Mode" ;;
+        docs/SCHEDULED_WORKFLOWS.md) purpose="Regelmäßige Workflows" ;;
+        docs/REPRODUCIBLE_WORKFLOWS.md) purpose="Reproduzierbarkeit" ;;
+        docs/PDF_METADATA_WORKFLOW.md) purpose="PDF-Metadaten-Workflow" ;;
+        docs/AI_GOVERNANCE.md) purpose="AI Governance" ;;
+        docs/SYSTEM_LIBRARY.md) purpose="Systembibliothek" ;;
+        docs/SCHEDULE_ENV_FIX.md) purpose="schedule.env Fix" ;;
+        docs/WORKFLOW_REGISTRY.md) purpose="Workflow-Register" ;;
+        docs/DOCUMENT_REGISTRY.md) purpose="Dokumenten-Register" ;;
+        docs/OPERATIONS_INDEX.md) purpose="Betriebsindex" ;;
+        *) purpose="Dokumentation" ;;
+      esac
+      echo "| \`$f\` | $purpose |"
+    done
+
+    echo
+    echo "## Bibliothekspfade"
+    echo
+    echo "\`\`\`text"
+    echo "$SYSTEM_LIB"
+    echo "$PROJECT_LIB"
+    echo "\`\`\`"
+  } > docs/DOCUMENT_REGISTRY.md
+}
+
+make_operations_index() {
+  {
+    echo "# Operations Index"
+    echo
+    echo "## Zweck"
+    echo
+    echo "Zentraler Einstiegspunkt für Betrieb, Prüfung, Dokumentation und Wiederherstellung von Local Focus OS."
+    echo
+    echo "## Daily Operations"
+    echo
+    echo "\`\`\`bash"
+    echo "lf-status"
+    echo "lf-autonomy status"
+    echo "lf-schedule status"
+    echo "lf-library index"
+    echo "\`\`\`"
+    echo
+    echo "## Validation"
+    echo
+    echo "\`\`\`bash"
+    echo "lf-repro-check"
+    echo "lf-secret-scan ."
+    echo "git status"
+    echo "\`\`\`"
+    echo
+    echo "## Register"
+    echo
+    echo "- \`docs/WORKFLOW_REGISTRY.md\`"
+    echo "- \`docs/DOCUMENT_REGISTRY.md\`"
+    echo "- \`docs/OPERATIONS_INDEX.md\`"
+    echo
+    echo "## Safety Boundary"
+    echo
+    echo "Keine externen Aktionen ohne Human Review."
+    echo
+    echo "Nicht automatisch:"
+    echo
+    echo "- E-Mails senden"
+    echo "- GitHub pushen"
+    echo "- Dateien löschen"
+    echo "- PDFs verändern"
+    echo "- Behördenkommunikation ausführen"
+  } > docs/OPERATIONS_INDEX.md
+}
+
+refresh_library() {
+  mkdir -p "$SYSTEM_LIB/docs" "$PROJECT_LIB/docs"
+
+  for f in README.md README_DE.md ROADMAP.md SECURITY.md CONTRIBUTING.md LICENSE; do
+    [[ -f "$f" ]] || continue
+    cp -a "$f" "$SYSTEM_LIB/"
+    cp -a "$f" "$PROJECT_LIB/"
+  done
+
+  cp -a docs/*.md "$SYSTEM_LIB/docs/" 2>/dev/null || true
+  cp -a docs/*.md "$PROJECT_LIB/docs/" 2>/dev/null || true
+
+  {
+    echo "# Local Focus OS Systembibliothek"
+    echo
+    echo "## Pfade"
+    echo
+    echo "- Systembibliothek: $SYSTEM_LIB"
+    echo "- Projektbibliothek: $PROJECT_LIB"
+    echo "- Repo: $REPO"
+    echo "- Reports: $REPORT_DIR"
+    echo "- Logs: $LOG_DIR"
+    echo
+    echo "## Zentrale Register"
+    echo
+    echo "- docs/WORKFLOW_REGISTRY.md"
+    echo "- docs/DOCUMENT_REGISTRY.md"
+    echo "- docs/OPERATIONS_INDEX.md"
+    echo
+    echo "## Betriebsbefehle"
+    echo
+    echo "\`\`\`bash"
+    echo "lf-status"
+    echo "lf-autonomy status"
+    echo "lf-schedule status"
+    echo "lf-library index"
+    echo "lf-inventory status"
+    echo "lf-repro-check"
+    echo "\`\`\`"
+    echo
+    echo "## Sicherheitsgrenzen"
+    echo
+    echo "- keine automatischen E-Mails"
+    echo "- keine automatischen GitHub-Pushes"
+    echo "- keine automatische Datei-Löschung"
+    echo "- keine PDF-Veränderung"
+    echo "- externe Aktionen nur nach Human Review"
+  } > "$SYSTEM_LIB/INDEX.md"
+
+  cp -a "$SYSTEM_LIB/INDEX.md" "$PROJECT_LIB/INDEX.md"
+}
+
+case "$cmd" in
+  refresh)
+    make_workflow_registry
+    make_document_registry
+    make_operations_index
+    refresh_library
+
+    TS="$(date +%Y%m%d_%H%M%S)"
+    REPORT="$REPORT_DIR/inventory_refresh_$TS.md"
+    {
+      echo "# Inventory Refresh"
+      echo
+      echo "- Datum: $(date)"
+      echo "- Repo: $REPO"
+      echo "- Systembibliothek: $SYSTEM_LIB"
+      echo "- Projektbibliothek: $PROJECT_LIB"
+      echo "- Status: OK"
+    } > "$REPORT"
+
+    echo "[OK] Inventory refreshed"
+    echo "Report: $REPORT"
+    ;;
+
+  status)
+    echo "==== LOCAL FOCUS OS INVENTORY STATUS ===="
+    date
+    echo
+    echo "Repo: $REPO"
+    echo "Systembibliothek: $SYSTEM_LIB"
+    echo "Projektbibliothek: $PROJECT_LIB"
+    echo
+    echo "== Workflows =="
+    find bin -maxdepth 1 -type f -name 'lf-*' -printf '%f\n' | sort
+    echo
+    echo "== Dokumente =="
+    find . -maxdepth 2 -type f \( -name '*.md' -o -name 'LICENSE' \) -not -path './.git/*' -printf '%P\n' | sort
+    ;;
+
+  open)
+    "$0" refresh
+    xdg-open "$SYSTEM_LIB" >/dev/null 2>&1 || echo "$SYSTEM_LIB"
+    ;;
+
+  *)
+    echo "Usage: lf-inventory status|refresh|open"
+    exit 1
+    ;;
+esac
