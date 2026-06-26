@@ -186,3 +186,41 @@ Commands:
 
     lf-inventory refresh
     lf-inventory status
+
+Reproducible Software Release
+
+Local Focus OS can be built as a reproducible local software package.
+
+make install
+make test
+make build
+
+Release artifacts are written to:
+
+dist/
+
+Documentation:
+
+docs/SOFTWARE_SPEC.md
+docs/REPRODUCIBLE_BUILD.md
+docs/RELEASE_ENGINEERING.md
+
+## Install from GitHub Repository
+
+    git clone https://github.com/DonMassa84/local-focus-os.git
+    cd local-focus-os
+    ./install.sh
+
+One-liner:
+
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/DonMassa84/local-focus-os/main/install.sh)"
+
+After installation:
+
+    local-focus-os help
+    local-focus-os doctor
+
+Documentation:
+
+- docs/INSTALL_FROM_REPO.md
+- docs/INSTALL_RELEASE.md

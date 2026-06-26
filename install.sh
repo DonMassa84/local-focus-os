@@ -1,75 +1,116 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BIN_SRC="$ROOT/bin"
-BIN_DEST="$HOME/.local/bin"
-DATA_HOME="${LF_HOME:-$HOME/.local/share/local-focus-os}"
-SYSTEMD_USER="$HOME/.config/systemd/user"
+echo "==== LOCAL FOCUS OS INSTALLER ===="
+date
+echo
 
-mkdir -p "$BIN_DEST" "$DATA_HOME" "$SYSTEMD_USER"
+GITHUB_URL="${LOCAL_FOCUS_OS_GIT_URL:-https://github.com/DonMassa84/local-focus-os.git}"
+INSTALL_ROOT="${LOCAL_FOCUS_OS_INSTALL_ROOT:-$HOME/.local/share/local-focus-os/source}"
+BIN_DIR="$HOME/.local/bin"
 
-for f in "$BIN_SRC"/lf-*; do
-  ln -sf "$f" "$BIN_DEST/$(basename "$f")"
-  chmod +x "$f"
+mkdir -p "$BIN_DIR" "$(dirname "$INSTALL_ROOT")"
+
+echo "== 1) System prüfen =="
+
+for cmd in bash git ln mkdir find sort; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "FEHLER: Befehl fehlt: $cmd"
+    exit 1
+  fi
 done
 
-if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' "$HOME/.bashrc"; then
-  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
+echo "[OK] Basisbefehle vorhanden"
+
+if command -v systemctl >/dev/null 2>&1; then
+  echo "[OK] systemctl vorhanden"
+else
+  echo "[WARN] systemctl nicht gefunden. Timer-Funktionen evtl. eingeschränkt."
 fi
 
-systemctl --user disable --now lf-morning.timer lf-evening.timer >/dev/null 2>&1 || true
-rm -f "$SYSTEMD_USER/lf-morning.service" "$SYSTEMD_USER/lf-morning.timer"
-rm -f "$SYSTEMD_USER/lf-evening.service" "$SYSTEMD_USER/lf-evening.timer"
+echo
+echo "== 2) Repo installieren oder aktualisieren =="
 
-cat > "$SYSTEMD_USER/lf-morning.service" << SERVICE
-[Unit]
-Description=Local Focus OS Morning Workflow
+if [[ -d "$INSTALL_ROOT/.git" ]]; then
+  echo "[INFO] Vorhandenes Repo wird aktualisiert: $INSTALL_ROOT"
+  git -C "$INSTALL_ROOT" fetch --all --tags
+  git -C "$INSTALL_ROOT" checkout main
+  git -C "$INSTALL_ROOT" pull --ff-only || true
+else
+  echo "[INFO] Klone Repo nach: $INSTALL_ROOT"
+  git clone "$GITHUB_URL" "$INSTALL_ROOT"
+fi
 
-[Service]
-Type=oneshot
-ExecStart=%h/.local/bin/lf-morning
-SERVICE
+cd "$INSTALL_ROOT"
 
-cat > "$SYSTEMD_USER/lf-morning.timer" << TIMER
-[Unit]
-Description=Run Local Focus OS Morning Workflow
+echo
+echo "== 3) Rechte setzen =="
 
-[Timer]
-OnCalendar=*-*-* 08:05:00
-Persistent=true
+chmod +x setup.sh uninstall.sh 2>/dev/null || true
+find bin -maxdepth 1 -type f -name 'lf-*' -exec chmod +x {} \; 2>/dev/null || true
+[[ -f bin/local-focus-os ]] && chmod +x bin/local-focus-os || true
+[[ -f tools/build_release.sh ]] && chmod +x tools/build_release.sh || true
+[[ -f tests/test_commands.sh ]] && chmod +x tests/test_commands.sh || true
 
-[Install]
-WantedBy=timers.target
-TIMER
+echo "[OK] Rechte gesetzt"
 
-cat > "$SYSTEMD_USER/lf-evening.service" << SERVICE
-[Unit]
-Description=Local Focus OS Evening Review
+echo
+echo "== 4) setup.sh ausführen =="
 
-[Service]
-Type=oneshot
-ExecStart=%h/.local/bin/lf-evening
-SERVICE
+if [[ -x ./setup.sh ]]; then
+  ./setup.sh
+else
+  echo "FEHLER: setup.sh fehlt oder ist nicht ausführbar."
+  exit 1
+fi
 
-cat > "$SYSTEMD_USER/lf-evening.timer" << TIMER
-[Unit]
-Description=Run Local Focus OS Evening Review
+echo
+echo "== 5) Haupt-CLI verlinken =="
 
-[Timer]
-OnCalendar=*-*-* 19:30:00
-Persistent=true
+if [[ -x "$INSTALL_ROOT/bin/local-focus-os" ]]; then
+  ln -sf "$INSTALL_ROOT/bin/local-focus-os" "$BIN_DIR/local-focus-os"
+  echo "[OK] local-focus-os -> $BIN_DIR/local-focus-os"
+else
+  echo "[WARN] bin/local-focus-os nicht gefunden. Basisbefehle lf-* wurden trotzdem installiert."
+fi
 
-[Install]
-WantedBy=timers.target
-TIMER
+echo
+echo "== 6) PATH prüfen =="
 
-systemctl --user daemon-reload
-systemctl --user reset-failed >/dev/null 2>&1 || true
-systemctl --user enable --now lf-morning.timer lf-evening.timer
+if [[ ":$PATH:" != *":$BIN_DIR:"* ]]; then
+  if [[ -f "$HOME/.bashrc" ]] && ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' "$HOME/.bashrc"; then
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
+    echo "[OK] PATH in ~/.bashrc ergänzt"
+  else
+    echo "[INFO] PATH bitte nachladen: source ~/.bashrc"
+  fi
+else
+  echo "[OK] ~/.local/bin ist im PATH"
+fi
 
-echo "[OK] Local Focus OS installed."
-echo "Run:"
-echo "  source ~/.bashrc"
+export PATH="$BIN_DIR:$PATH"
+hash -r || true
+
+echo
+echo "== 7) Smoke Test =="
+
+command -v lf-status >/dev/null 2>&1 && lf-status || true
+command -v lf-repro-check >/dev/null 2>&1 && lf-repro-check || true
+command -v local-focus-os >/dev/null 2>&1 && local-focus-os version || true
+
+echo
+echo "==== INSTALL COMPLETE ===="
+echo
+echo "Installationspfad:"
+echo "  $INSTALL_ROOT"
+echo
+echo "Befehle:"
+echo "  local-focus-os help"
+echo "  local-focus-os status"
+echo "  local-focus-os doctor"
 echo "  lf-status"
-echo "  lf-run"
+echo "  lf-schedule status"
+echo "  lf-library status"
+echo
+echo "Falls Befehle nicht gefunden werden:"
+echo "  source ~/.bashrc"
