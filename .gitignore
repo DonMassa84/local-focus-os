@@ -17,3 +17,5 @@ reports/private/
 node_modules/
 pycache/
 .DS_Store
+.repair_backup_*/
+main
