@@ -17,16 +17,8 @@ Keine Halluzination bei kritischen Aufgaben.
 - deterministisches Aufgabenrouting
 - Tagesworkflow
 - Abendkontrolle
-- lokale Markdown-Reports
-- optionale Ollama-Integration
-- Secret-Scan vor Veröffentlichung
-- systemd User Timer
-
-## Beispiel
-
-```bash
-echo "housing, authority documents, project documentation, exam drill" | lf-run custom
-Sicherheitsprinzip
+customhousing, authority documents, project documentation, exam drill" | lf-run 
+> Sicherheitsprinzip
 
 KI unterstützt Sprache.
 Regeln steuern Ausführung.
