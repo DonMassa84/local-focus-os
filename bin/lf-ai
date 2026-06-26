@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+MODEL="${LF_MODEL:-llama3.2}"
+PROMPT="${*:-}"
+
+if [[ -z "$PROMPT" ]]; then
+echo 'Usage: lf-ai "prompt"'
+exit 1
+fi
+
+if ! command -v ollama >/dev/null 2>&1; then
+echo "ERROR: ollama not found."
+exit 1
+fi
+
+ollama run "$MODEL" "$PROMPT"

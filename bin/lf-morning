@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "housing organize, authority documents check, local workflow document, exam drill write" | lf-run morning

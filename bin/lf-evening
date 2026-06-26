@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+BASE="${LF_HOME:-$HOME/.local/share/local-focus-os}"
+REPORT_DIR="$BASE/reports"
+mkdir -p "$REPORT_DIR"
+
+TS="$(date +%Y%m%d_%H%M%S)"
+OUT="$REPORT_DIR/evening_$TS.md"
+
+{
+echo "# Evening Review"
+echo
+echo "Date: $(date)"
+echo
+echo "## Evidence Check"
+echo "- [ ] Report exists"
+echo "- [ ] Task file updated"
+echo "- [ ] Email sent/archived manually"
+echo "- [ ] Screenshot exists"
+echo "- [ ] Command completed"
+echo
+echo "## Result"
+echo "- Done:"
+echo "- Blocker:"
+echo "- First task tomorrow:"
+echo
+echo "Rule: if there is no evidence, the task is not done."
+} | tee "$OUT"
+
+xdg-open "$OUT" >/dev/null 2>&1 || true
+echo "[OK] evening review: $OUT"

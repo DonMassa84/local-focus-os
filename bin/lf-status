@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+BASE="${LF_HOME:-$HOME/.local/share/local-focus-os}"
+
+echo "==== LOCAL FOCUS OS STATUS ===="
+date
+echo
+
+echo "== Commands =="
+for cmd in lf-run lf-task lf-ai lf-email lf-morning lf-evening lf-status lf-secret-scan; do
+if command -v "$cmd" >/dev/null 2>&1; then
+echo "[OK] $cmd -> $(command -v "$cmd")"
+else
+echo "[MISSING] $cmd"
+fi
+done
+
+echo
+echo "== Latest Session =="
+if [[ -L "$BASE/workflows/latest" ]]; then
+readlink -f "$BASE/workflows/latest"
+else
+echo "No latest session."
+fi
+
+echo
+echo "== Ollama =="
+if command -v ollama >/dev/null 2>&1; then
+ollama list || true
+else
+echo "Ollama not installed."
+fi
+
+echo
+echo "== Timers =="
+systemctl --user list-timers 'lf-*' --no-pager 2>/dev/null || true

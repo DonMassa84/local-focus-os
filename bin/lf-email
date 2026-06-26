@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+BASE="${LF_HOME:-$HOME/.local/share/local-focus-os}"
+REPORT_DIR="$BASE/reports"
+mkdir -p "$REPORT_DIR"
+
+TS="$(date +%Y%m%d_%H%M%S)"
+OUT="$REPORT_DIR/email_$TS.md"
+INPUT="$(cat || true)"
+
+if [[ -z "${INPUT// }" ]]; then
+echo "ERROR: no email text provided."
+exit 1
+fi
+
+if command -v ollama >/dev/null 2>&1; then
+MODEL="${LF_MODEL:-llama3.2}"
+PROMPT="Rewrite the following rough email into a concise, polite, professional email. Do not invent facts, dates, attachments, amounts, names or deadlines. Output only the final email.
+
+ROUGH TEXT:
+$INPUT"
+ollama run "$MODEL" "$PROMPT" | tee "$OUT"
+else
+{
+echo "Subject: Follow-up"
+echo
+echo "Hello,"
+echo
+echo "$INPUT"
+echo
+echo "Best regards"
+} | tee "$OUT"
+fi
+
+echo
+echo "[OK] saved: $OUT"

@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+BASE="${LF_HOME:-$HOME/.local/share/local-focus-os}"
+WORKFLOW_DIR="$BASE/workflows"
+mkdir -p "$WORKFLOW_DIR"
+
+TS="$(date +%Y%m%d_%H%M%S)"
+SESSION="$WORKFLOW_DIR/session_$TS"
+mkdir -p "$SESSION"
+
+MODE="${1:-daily}"
+DEFAULT_DUMP="housing organize, authority documents check, local workflow document, exam drill write"
+
+if [[ ! -t 0 ]]; then
+INPUT_DUMP="$(cat || true)"
+else
+INPUT_DUMP="$DEFAULT_DUMP"
+fi
+
+[[ -z "${INPUT_DUMP// }" ]] && INPUT_DUMP="$DEFAULT_DUMP"
+
+INDEX="$SESSION/00_INDEX.md"
+META="$SESSION/00_META.md"
+TASKS="$SESSION/01_TASKS.md"
+REVIEW="$SESSION/02_REVIEW.md"
+
+{
+echo "# Local Focus OS Session"
+echo
+echo "- Date: $(date)"
+echo "- Mode: $MODE"
+echo "- Session: $SESSION"
+echo
+echo "## Brain Dump"
+echo "$INPUT_DUMP"
+} > "$META"
+
+printf '%s\n' "$INPUT_DUMP" | lf-task | tee "$TASKS" >/dev/null
+
+{
+echo "# Review"
+echo
+echo "- [ ] One task finished with evidence"
+echo "- [ ] No private data copied into public repo"
+echo "- [ ] No email sent without manual review"
+echo "- [ ] No invented confirmation"
+} > "$REVIEW"
+
+{
+echo "# Session Index"
+echo
+echo "- 00_META.md"
+echo "- 01_TASKS.md"
+echo "- 02_REVIEW.md"
+echo
+echo "Rule: no evidence means not done."
+} > "$INDEX"
+
+ln -sfn "$SESSION" "$WORKFLOW_DIR/latest"
+xdg-open "$INDEX" >/dev/null 2>&1 || true
+
+echo "[OK] session created: $SESSION"

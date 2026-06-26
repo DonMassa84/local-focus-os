@@ -1,0 +1,176 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+BASE="${LF_HOME:-$HOME/.local/share/local-focus-os}"
+TASK_DIR="$BASE/tasks"
+mkdir -p "$TASK_DIR"
+
+TS="$(date +%Y%m%d_%H%M%S)"
+OUT="$TASK_DIR/tasks_$TS.md"
+INPUT="$(cat || true)"
+
+if [[ -z "${INPUT// }" ]]; then
+echo "ERROR: no brain dump provided."
+echo 'Example: echo "housing, authority documents, project, exam" | lf-task'
+exit 1
+fi
+
+NOW_TEXT=""
+WEEK_TEXT=""
+WAIT_TEXT=""
+TOP_TEXT=""
+TOP_COUNT=0
+
+HAS_AUTH=0
+HAS_HOUSING=0
+HAS_PROJECT=0
+HAS_EXAM=0
+HAS_EMAIL_WAIT=0
+HAS_EMAIL_OPEN=0
+
+append_now() {
+NOW_TEXT+="- [ ] $1 | Area: $2 | Next action: $3 | Energy: $4 | Risk: $5"$'\n'
+}
+
+append_week() {
+WEEK_TEXT+="- [ ] $1 | Area: $2 | Next action: $3 | Energy: $4 | Risk: $5"$'\n'
+}
+
+append_wait() {
+WAIT_TEXT+="- [ ] $1 | Stakeholder: $2 | missing: $3 | next trigger: $4"$'\n'
+}
+
+add_top() {
+if [[ "$TOP_COUNT" -lt 3 ]]; then
+TOP_COUNT=$((TOP_COUNT + 1))
+TOP_TEXT+="$TOP_COUNT. $1"$'\n'
+fi
+}
+
+process_item() {
+local ITEM="$1"
+local L="$2"
+local MATCHED=0
+
+if [[ "$L" == authority || "$L" == office || "$L" == document || "$L" == deadline || "$L" == payment || "$L" == benefit || "$L" == jobcenter ]]; then
+MATCHED=1
+if [[ "$HAS_AUTH" -eq 0 ]]; then
+append_now "Check authority documents and deadlines" "Authority/Documents/Deadlines" "open current documents, list missing evidence, create local report" "medium" "high"
+add_top "Check authority documents and deadlines."
+HAS_AUTH=1
+fi
+fi
+
+if [[ "$L" == housing || "$L" == apartment || "$L" == move || "$L" == furniture || "$L" == rent || "$L" == transport || "$L" == wohnung ]]; then
+MATCHED=1
+if [[ "$HAS_HOUSING" -eq 0 ]]; then
+append_week "Organize housing and move" "Housing/Move/Furniture" "update list of open furniture, transport, costs and documents" "high" "high"
+add_top "Secure housing and move organization."
+HAS_HOUSING=1
+fi
+fi
+
+if [[ "$L" == project || "$L" == workflow || "$L" == github || "$L" == portfolio || "$L" == documentation || "$L" == linux || "$L" == ai || "$L" == openclaw ]]; then
+MATCHED=1
+if [[ "$HAS_PROJECT" -eq 0 ]]; then
+append_now "Document local workflow" "Project/Linux/Local AI/Portfolio" "save installation state, commands, test results and purpose as Markdown runbook" "medium" "medium"
+add_top "Document local workflow as portfolio evidence."
+HAS_PROJECT=1
+fi
+fi
+
+if [[ "$L" == exam || "$L" == study || "$L" == drill || "$L" == ihk || "$L" == mfp || "$L" == prüfung ]]; then
+MATCHED=1
+if [[ "$HAS_EXAM" -eq 0 ]]; then
+append_now "Write exam drill" "Exam Preparation" "write one 20-minute drill and compare against checklist" "medium" "medium"
+add_top "Train exam output with one written drill."
+HAS_EXAM=1
+fi
+fi
+
+if [[ "$L" == email || "$L" == mail || "$L" == sent || "$L" == gesendet ]]; then
+MATCHED=1
+if [[ "$L" == sent || "$L" == gesendet || "$L" == already ]]; then
+if [[ "$HAS_EMAIL_WAIT" -eq 0 ]]; then
+append_wait "Wait for email response" "Recipient" "response" "incoming reply"
+HAS_EMAIL_WAIT=1
+fi
+else
+if [[ "$HAS_EMAIL_OPEN" -eq 0 ]]; then
+append_now "Prepare email" "Communication" "review draft, verify recipient, then send manually or save as draft" "low" "medium"
+add_top "Finish open email safely."
+HAS_EMAIL_OPEN=1
+fi
+fi
+fi
+
+if [[ "$MATCHED" -eq 0 && -n "${ITEM// }" ]]; then
+append_now "$ITEM" "Unsorted" "define one concrete next action in writing" "medium" "medium"
+add_top "$ITEM: define next action."
+fi
+}
+
+while IFS= read -r RAW; do
+ITEM="$(printf '%s' "$RAW" | sed 's/^[[:space:]]//;s/[[:space:]]$//')"
+[[ -z "$ITEM" ]] && continue
+L="$(printf '%s' "$ITEM" | tr '[:upper:]' '[:lower:]')"
+process_item "$ITEM" "$L"
+done < <(printf '%s\n' "$INPUT" | tr ',' '\n')
+
+{
+echo "# Task List"
+echo
+echo "Source: brain dump on $(date)"
+echo
+
+echo "## 1. Today"
+if [[ -z "$NOW_TEXT" ]]; then
+echo "- [ ] No immediate task detected | Area: Control | Next action: clarify brain dump | Energy: low | Risk: low"
+else
+printf '%s' "$NOW_TEXT"
+fi
+echo
+
+echo "## 2. This Week"
+if [[ -z "$WEEK_TEXT" ]]; then
+echo "- [ ] Weekly review | Area: Planning | Next action: transfer open items from latest reports | Energy: low | Risk: low"
+else
+printf '%s' "$WEEK_TEXT"
+fi
+echo
+
+echo "## 3. Waiting / Delegated"
+if [[ -z "$WAIT_TEXT" ]]; then
+echo "- [ ] No waiting item detected | Stakeholder: none | missing: nothing | next trigger: new input"
+else
+printf '%s' "$WAIT_TEXT"
+fi
+echo
+
+echo "## 4. Top Three Actions"
+if [[ -z "$TOP_TEXT" ]]; then
+echo "1. Clarify brain dump."
+echo "2. Finish one task with evidence."
+echo "3. Run evening review."
+else
+printf '%s' "$TOP_TEXT"
+while [[ "$TOP_COUNT" -lt 3 ]]; do
+TOP_COUNT=$((TOP_COUNT + 1))
+echo "$TOP_COUNT. Define one open task and finish it with evidence."
+done
+fi
+echo
+
+echo "## 5. Evening Control"
+echo "- [ ] Verify evidence: report, updated task file, sent/archived email, screenshot or completed command."
+echo
+
+echo "## 6. Safety Rules"
+echo "- No invented confirmations."
+echo "- No invented deadlines."
+echo "- No invented calls."
+echo "- Sent emails are documented; responses are awaited."
+} | tee "$OUT"
+
+echo
+echo "[OK] saved: $OUT"
