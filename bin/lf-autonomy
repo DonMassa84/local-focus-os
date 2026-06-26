@@ -1,0 +1,225 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+export PATH="$HOME/.local/bin:$PATH"
+
+CONFIG_DIR="$HOME/.config/local-focus-os"
+CONFIG="$CONFIG_DIR/autonomy.env"
+SYSTEMD_USER="$HOME/.config/systemd/user"
+DATA_DIR="${LF_HOME:-$HOME/.local/share/local-focus-os}"
+LOG_DIR="$DATA_DIR/logs"
+
+mkdir -p "$CONFIG_DIR" "$SYSTEMD_USER" "$LOG_DIR"
+
+cmd="${1:-status}"
+
+write_config_enabled() {
+  local value="$1"
+  if [[ ! -f "$CONFIG" ]]; then
+    cat > "$CONFIG" << EOF2
+LF_AUTONOMY_ENABLED=$value
+LF_MORNING_TIME=08:05:00
+LF_EVENING_TIME=19:30:00
+LF_HEALTHCHECK_MINUTE=15
+LF_MODEL=llama3.2
+LF_HOME=$HOME/.local/share/local-focus-os
+EOF2
+  else
+    if grep -q '^LF_AUTONOMY_ENABLED=' "$CONFIG"; then
+      sed -i "s/^LF_AUTONOMY_ENABLED=.*/LF_AUTONOMY_ENABLED=$value/" "$CONFIG"
+    else
+      echo "LF_AUTONOMY_ENABLED=$value" >> "$CONFIG"
+    fi
+  fi
+}
+
+install_units() {
+  local morning="${1:-08:05:00}"
+  local evening="${2:-19:30:00}"
+  local minute="${3:-15}"
+
+  cat > "$SYSTEMD_USER/lf-autonomy-morning.service" << SERVICE
+[Unit]
+Description=Local Focus OS Autonomy Morning
+
+[Service]
+Type=oneshot
+EnvironmentFile=-%h/.config/local-focus-os/autonomy.env
+ExecStart=%h/.local/bin/lf-autonomy-run morning
+SERVICE
+
+  cat > "$SYSTEMD_USER/lf-autonomy-morning.timer" << TIMER
+[Unit]
+Description=Run Local Focus OS Autonomy Morning
+
+[Timer]
+OnCalendar=*-*-* $morning
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+TIMER
+
+  cat > "$SYSTEMD_USER/lf-autonomy-evening.service" << SERVICE
+[Unit]
+Description=Local Focus OS Autonomy Evening
+
+[Service]
+Type=oneshot
+EnvironmentFile=-%h/.config/local-focus-os/autonomy.env
+ExecStart=%h/.local/bin/lf-autonomy-run evening
+SERVICE
+
+  cat > "$SYSTEMD_USER/lf-autonomy-evening.timer" << TIMER
+[Unit]
+Description=Run Local Focus OS Autonomy Evening
+
+[Timer]
+OnCalendar=*-*-* $evening
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+TIMER
+
+  cat > "$SYSTEMD_USER/lf-autonomy-healthcheck.service" << SERVICE
+[Unit]
+Description=Local Focus OS Autonomy Healthcheck
+
+[Service]
+Type=oneshot
+EnvironmentFile=-%h/.config/local-focus-os/autonomy.env
+ExecStart=%h/.local/bin/lf-autonomy-run healthcheck
+SERVICE
+
+  cat > "$SYSTEMD_USER/lf-autonomy-healthcheck.timer" << TIMER
+[Unit]
+Description=Run Local Focus OS Autonomy Healthcheck hourly
+
+[Timer]
+OnCalendar=*-*-* *:$minute:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+TIMER
+
+  systemctl --user daemon-reload
+}
+
+case "$cmd" in
+  on)
+    write_config_enabled true
+    install_units
+    systemctl --user enable --now \
+      lf-autonomy-morning.timer \
+      lf-autonomy-evening.timer \
+      lf-autonomy-healthcheck.timer
+    echo "[OK] Autonomy Mode aktiviert"
+    systemctl --user list-timers 'lf-autonomy-*' --no-pager
+    ;;
+
+  off)
+    write_config_enabled false
+    systemctl --user disable --now \
+      lf-autonomy-morning.timer \
+      lf-autonomy-evening.timer \
+      lf-autonomy-healthcheck.timer >/dev/null 2>&1 || true
+    echo "[OK] Autonomy Mode deaktiviert"
+    systemctl --user list-timers 'lf-autonomy-*' --no-pager || true
+    ;;
+
+  status)
+    echo "==== LOCAL FOCUS OS AUTONOMY STATUS ===="
+    date
+    echo
+    echo "== Config =="
+    if [[ -f "$CONFIG" ]]; then
+      cat "$CONFIG"
+    else
+      echo "No config: $CONFIG"
+    fi
+    echo
+    echo "== Timers =="
+    systemctl --user list-timers 'lf-autonomy-*' --no-pager || true
+    echo
+    echo "== Units =="
+    systemctl --user status \
+      lf-autonomy-morning.timer \
+      lf-autonomy-evening.timer \
+      lf-autonomy-healthcheck.timer \
+      --no-pager || true
+    ;;
+
+  run)
+    shift || true
+    lf-autonomy-run "${1:-healthcheck}" "${@:2}"
+    ;;
+
+  logs)
+    LOG="$LOG_DIR/autonomy.log"
+    if [[ -f "$LOG" ]]; then
+      tail -n 80 "$LOG"
+    else
+      echo "No log yet: $LOG"
+    fi
+    ;;
+
+  reschedule)
+    morning="${2:-08:05:00}"
+    evening="${3:-19:30:00}"
+    minute="${4:-15}"
+
+    write_config_enabled true
+
+    if grep -q '^LF_MORNING_TIME=' "$CONFIG"; then
+      sed -i "s/^LF_MORNING_TIME=.*/LF_MORNING_TIME=$morning/" "$CONFIG"
+    else
+      echo "LF_MORNING_TIME=$morning" >> "$CONFIG"
+    fi
+
+    if grep -q '^LF_EVENING_TIME=' "$CONFIG"; then
+      sed -i "s/^LF_EVENING_TIME=.*/LF_EVENING_TIME=$evening/" "$CONFIG"
+    else
+      echo "LF_EVENING_TIME=$evening" >> "$CONFIG"
+    fi
+
+    if grep -q '^LF_HEALTHCHECK_MINUTE=' "$CONFIG"; then
+      sed -i "s/^LF_HEALTHCHECK_MINUTE=.*/LF_HEALTHCHECK_MINUTE=$minute/" "$CONFIG"
+    else
+      echo "LF_HEALTHCHECK_MINUTE=$minute" >> "$CONFIG"
+    fi
+
+    install_units "$morning" "$evening" "$minute"
+    systemctl --user restart \
+      lf-autonomy-morning.timer \
+      lf-autonomy-evening.timer \
+      lf-autonomy-healthcheck.timer
+
+    echo "[OK] Autonomy Zeiten gesetzt"
+    echo "Morning:     $morning"
+    echo "Evening:     $evening"
+    echo "Healthcheck: jede Stunde Minute $minute"
+    systemctl --user list-timers 'lf-autonomy-*' --no-pager
+    ;;
+
+  *)
+    cat << HELP
+Usage:
+  lf-autonomy on
+  lf-autonomy off
+  lf-autonomy status
+  lf-autonomy run [healthcheck|morning|evening|custom]
+  lf-autonomy logs
+  lf-autonomy reschedule 08:05:00 19:30:00 15
+
+Meaning:
+  on         enable autonomous local workflows
+  off        stop autonomous local workflows
+  status     show timers, config and unit state
+  run        run one autonomy cycle now
+  logs       show autonomy log
+  reschedule set morning/evening/hourly healthcheck minute
+HELP
+    ;;
+esac

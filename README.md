@@ -72,3 +72,16 @@ Human review is required before publishing, sending, submitting or sharing anyth
 ## License
 
 MIT
+
+## Quick Setup
+
+
+## Autonomy Mode
+
+Controlled local autonomy is available:
+
+    lf-autonomy on
+    lf-autonomy status
+    lf-autonomy off
+
+Documentation: docs/AUTONOMY.md

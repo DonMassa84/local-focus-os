@@ -21,11 +21,6 @@ if [[ ! -d "$BIN_SRC" ]]; then
   exit 1
 fi
 
-if ! command -v bash >/dev/null 2>&1; then
-  echo "ERROR: bash not found."
-  exit 1
-fi
-
 echo "[OK] Base checks passed"
 echo
 
@@ -56,15 +51,25 @@ echo
 echo "== 4) Create config =="
 
 cat > "$CONFIG_HOME/config.env" << CONFIG_EOF
-# Local Focus OS config
 LF_MODEL=llama3.2
 LF_HOME=$DATA_HOME
 CONFIG_EOF
 
-echo "[OK] Config: $CONFIG_HOME/config.env"
+if [[ ! -f "$CONFIG_HOME/autonomy.env" ]]; then
+  cat > "$CONFIG_HOME/autonomy.env" << AUTO_EOF
+LF_AUTONOMY_ENABLED=true
+LF_MORNING_TIME=08:05:00
+LF_EVENING_TIME=19:30:00
+LF_HEALTHCHECK_MINUTE=15
+LF_MODEL=llama3.2
+LF_HOME=$DATA_HOME
+AUTO_EOF
+fi
+
+echo "[OK] Config: $CONFIG_HOME"
 
 echo
-echo "== 5) Install systemd user timers =="
+echo "== 5) Install standard timers =="
 
 if command -v systemctl >/dev/null 2>&1; then
   systemctl --user disable --now lf-morning.timer lf-evening.timer >/dev/null 2>&1 || true
@@ -117,9 +122,7 @@ TIMER_EOF
   systemctl --user reset-failed >/dev/null 2>&1 || true
   systemctl --user enable --now lf-morning.timer lf-evening.timer
 
-  echo "[OK] systemd user timers installed"
-else
-  echo "[WARN] systemctl unavailable. Skipping timer installation."
+  echo "[OK] standard timers installed"
 fi
 
 echo
@@ -135,17 +138,11 @@ fi
 echo
 echo "== 7) Smoke test =="
 
-if command -v lf-status >/dev/null 2>&1; then
-  lf-status || true
-else
-  echo "[WARN] lf-status not found after install. Reload shell or check PATH."
-fi
+lf-status || true
 
 echo
 echo "==== SETUP COMPLETE ===="
 echo "Run:"
 echo "  source ~/.bashrc"
 echo "  lf-status"
-echo
-echo "Create workflow:"
-echo '  echo "housing, authority documents, project documentation, exam drill" | lf-run custom'
+echo "  lf-autonomy on"

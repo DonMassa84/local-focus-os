@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+export PATH="$HOME/.local/bin:$PATH"
+
+CONFIG="$HOME/.config/local-focus-os/autonomy.env"
+if [[ -f "$CONFIG" ]]; then
+  # shellcheck disable=SC1090
+  source "$CONFIG" || true
+fi
+
+ENABLED="${LF_AUTONOMY_ENABLED:-true}"
+DATA_DIR="${LF_HOME:-$HOME/.local/share/local-focus-os}"
+REPORT_DIR="$DATA_DIR/reports"
+LOG_DIR="$DATA_DIR/logs"
+mkdir -p "$REPORT_DIR" "$LOG_DIR"
+
+TS="$(date +%Y%m%d_%H%M%S)"
+MODE="${1:-healthcheck}"
+REPORT="$REPORT_DIR/autonomy_${MODE}_${TS}.md"
+LOG="$LOG_DIR/autonomy.log"
+
+logline() {
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG"
+}
+
+if [[ "$ENABLED" != "true" ]]; then
+  logline "Autonomy disabled. Mode=$MODE"
+  exit 0
+fi
+
+{
+echo "# Local Focus OS Autonomy Run"
+echo
+echo "- Date: $(date)"
+echo "- Mode: $MODE"
+echo "- Host: $(hostname)"
+echo "- User: $(whoami)"
+echo
+echo "## 1. Safety Rules"
+echo "- No automatic email sending."
+echo "- No automatic GitHub push."
+echo "- No automatic deletion of user data."
+echo "- No invented confirmations, deadlines or replies."
+echo
+
+echo "## 2. Command Check"
+for cmd in lf-run lf-task lf-status lf-evening lf-morning lf-secret-scan; do
+  if command -v "$cmd" >/dev/null 2>&1; then
+    echo "- OK: $cmd -> $(command -v "$cmd")"
+  else
+    echo "- MISSING: $cmd"
+  fi
+done
+echo
+
+echo "## 3. Timer Check"
+systemctl --user list-timers 'lf-*' --no-pager 2>&1 || true
+echo
+
+echo "## 4. Mode Execution"
+case "$MODE" in
+  morning)
+    echo "Running morning workflow..."
+    echo "housing organize, authority documents check, local workflow document, exam drill write" | lf-run morning 2>&1 || true
+    ;;
+  evening)
+    echo "Running evening review..."
+    lf-evening 2>&1 || true
+    ;;
+  healthcheck)
+    echo "Running healthcheck..."
+    lf-status 2>&1 || true
+    ;;
+  custom)
+    echo "Running custom autonomy workflow..."
+    echo "${*:2}" | lf-run custom 2>&1 || true
+    ;;
+  *)
+    echo "Unknown mode: $MODE"
+    ;;
+esac
+echo
+
+echo "## 5. Evidence"
+echo "- Report: $REPORT"
+echo "- Log: $LOG"
+echo
+echo "## 6. Result"
+echo "- Autonomy run completed locally."
+} | tee "$REPORT"
+
+logline "Completed autonomy mode=$MODE report=$REPORT"
+echo "[OK] Autonomy report: $REPORT"
