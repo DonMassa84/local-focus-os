@@ -52,3 +52,47 @@ Private Daten bleiben lokal.
 ## Status
 
 Veröffentlicht als Open-Source-Projekt unter MIT-Lizenz.
+
+## Warum dieses Projekt relevant ist
+
+Local Focus OS zeigt praktische Linux-Automatisierung mit klarem operativem Zweck.
+
+Es ist keine reine Skript-Sammlung, sondern ein kleines lokales Workflow-Betriebssystem mit:
+
+- Bash-Automatisierung
+- systemd User Timern
+- Markdown-Reports
+- lokaler KI-Integration über Ollama
+- deterministischem Aufgabenrouting
+- Human-Review-Grenzen
+- datenschutzfreundlicher Architektur
+- reproduzierbarer Installation
+
+Das Projekt eignet sich als Proof-of-Work für IT Operations, Linux Administration, IT Service Management, Workflow-Automatisierung und lokale KI-Operations.
+
+## Berufliches Signal
+
+Das Projekt zeigt die Fähigkeit:
+
+- operative Reibung zu erkennen
+- wiederholbare Workflows zu entwerfen
+- lokale Automatisierung umzusetzen
+- Setup und Nutzung zu dokumentieren
+- Sicherheitsgrenzen einzubauen
+- ein sauberes Open-Source-Repository zu veröffentlichen
+- Workflows über systemd Timer zu betreiben
+
+## Positionierung
+
+Erstellt von Daniel Massa als Proof-of-Work für das Rollenprofil:
+
+KI-gestützter IT Operations & Automation Specialist
+
+Schwerpunkte:
+
+- Linux-Automatisierung
+- Local-first AI
+- IT-Operations-Workflows
+- technische Dokumentation
+- Human-in-the-loop Automation
+- datenschutzbewusste Toolentwicklung
