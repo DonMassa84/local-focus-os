@@ -1,4 +1,211 @@
-# Local Focus OS\n\nPrivacy-first workflow automation for Linux.\n\nLocal Focus OS is a local-first, open-source execution system for brain dumps, task routing, daily control, evening review, optional local AI usage and Markdown-based documentation.\n\n## Features\n\n- Brain dump to structured tasks\n- Deterministic routing instead of hallucinated task lists\n- Daily workflow sessions\n- Morning and evening review\n- Local AI wrapper through Ollama\n- Email draft cleanup with local models\n- Markdown-based local archive\n- systemd user timer automation\n- Basic secret scan before publishing\n\n## Requirements\n\n- Linux Mint / Ubuntu\n- Bash\n- systemd user services\n- Optional: Ollama\n\n## Quick Setup\n\n    git clone https://github.com/DonMassa84/local-focus-os.git\n    cd local-focus-os\n    chmod +x setup.sh\n    ./setup.sh\n    source ~/.bashrc\n    lf-status\n\n## One-Line Setup\n\n    git clone https://github.com/DonMassa84/local-focus-os.git && cd local-focus-os && chmod +x setup.sh && ./setup.sh\n\n## Usage\n\n    lf-run\n    echo "housing, authority documents, project documentation, exam drill" | lf-run custom\n    lf-evening\n    lf-status\n\n## Commands\n\n| Command | Purpose |\n|---|---|\n| lf-task | Convert brain dump into deterministic task list |\n| lf-run | Create full workflow session |\n| lf-ai | Local Ollama wrapper |\n| lf-email | Clean rough email draft locally |\n| lf-morning | Morning workflow |\n| lf-evening | Evening review |\n| lf-status | Status check |\n| lf-secret-scan | Basic secret/privacy scan |\n\n## Safety\n\nLocal Focus OS does not send emails automatically, does not push to GitHub automatically, and does not verify facts by itself.\n\nHuman review is required before publishing, sending, submitting or sharing anything.\n\n## Documentation\n\n- German README: README_DE.md\n- Installation guide: docs/INSTALL.md\n- AI Governance: docs/AI_GOVERNANCE.md\n- Architecture: docs/ARCHITECTURE.md\n\n## License\n\nMIT\n\n## Quick Setup\n\n\n## Autonomy Mode\n\nControlled local autonomy is available:\n\n    lf-autonomy on\n    lf-autonomy status\n    lf-autonomy off\n\nDocumentation: docs/AUTONOMY.md\n\n## Why this project matters\n\nLocal Focus OS demonstrates practical Linux automation with a clear operational purpose.\n\nIt is not just a script collection. It shows how local-first tools can be combined into a small workflow operating system with:\n\n- Bash-based automation\n- systemd user timers\n- Markdown-based reporting\n- local AI integration through Ollama\n- deterministic task routing\n- human review boundaries\n- privacy-first design\n- reproducible installation\n\nThe project is useful as a portfolio proof-of-work for IT Operations, Linux Administration, IT Service Management, workflow automation and local AI operations.\n\n## Professional Signal\n\nThis project shows the ability to:\n\n- identify operational friction\n- design a repeatable workflow\n- implement automation locally\n- document setup and usage\n- add safety boundaries\n- publish a clean open-source repository\n- operate the workflow through systemd timers\n\n## Positioning\n\nBuilt by Daniel Massa as proof-of-work for the role profile:\n\nAI-assisted IT Operations and Automation Specialist\n\nFocus areas:\n\n- Linux automation\n- local-first AI\n- IT operations workflows\n- documentation engineering\n- human-in-the-loop automation\n- privacy-aware tooling\n\n## ELIZA Effect Awareness\n\nLocal Focus OS explicitly documents the ELIZA effect as a workflow safety risk.\n\nThe system does not treat AI output as verified truth or autonomous authority.\n\nDocumentation: docs/ELIZA_EFFECT.md\n\nReproducible Workflows\n\nLocal Focus OS keeps workflows reproducible by storing executable commands in bin/lf-*, documenting them in docs/, and writing local reports.\n\nDocumentation:\n\ndocs/REPRODUCIBLE_WORKFLOWS.md\ndocs/PDF_METADATA_WORKFLOW.md\n\n## Scheduled Workflows\n\nLocal Focus OS includes scheduled local workflows through systemd user timers.\n\nDocumentation: docs/SCHEDULED_WORKFLOWS.md\n\nControl:\n\n    lf-schedule on\n    lf-schedule status\n    lf-schedule off\n\nSystem Library\n\nLocal Focus OS keeps a local system library for stable documentation, runbooks and validation evidence.\n\nDocumentation: docs/SYSTEM_LIBRARY.md\n\nCommands:\n\nlf-library refresh\nlf-library status\nlf-library index\n\n\n## Workflow and Document Registry\n\nLocal Focus OS maintains a generated registry of all workflows and documentation.\n\nDocumentation:\n\n- docs/WORKFLOW_REGISTRY.md\n- docs/DOCUMENT_REGISTRY.md\n- docs/OPERATIONS_INDEX.md\n\nCommands:\n\n    lf-inventory refresh\n    lf-inventory status\n\nReproducible Software Release\n\nLocal Focus OS can be built as a reproducible local software package.\n\nmake install\nmake test\nmake build\n\nRelease artifacts are written to:\n\ndist/\n\nDocumentation:\n\ndocs/SOFTWARE_SPEC.md\ndocs/REPRODUCIBLE_BUILD.md\ndocs/RELEASE_ENGINEERING.md\n\n## Install from GitHub Repository
+# Local Focus OS
+
+Privacy-first workflow automation for Linux.
+
+Local Focus OS is a local-first, open-source execution system for brain dumps, task routing, daily control, evening review, optional local AI usage and Markdown-based documentation.
+
+## Features
+
+- Brain dump to structured tasks
+- Deterministic routing instead of hallucinated task lists
+- Daily workflow sessions
+- Morning and evening review
+- Local AI wrapper through Ollama
+- Email draft cleanup with local models
+- Markdown-based local archive
+- systemd user timer automation
+- Basic secret scan before publishing
+
+## Requirements
+
+- Linux Mint / Ubuntu
+- Bash
+- systemd user services
+- Optional: Ollama
+
+## Quick Setup
+
+    git clone https://github.com/DonMassa84/local-focus-os.git
+    cd local-focus-os
+    chmod +x setup.sh
+    ./setup.sh
+    source ~/.bashrc
+    lf-status
+
+## One-Line Setup
+
+    git clone https://github.com/DonMassa84/local-focus-os.git && cd local-focus-os && chmod +x setup.sh && ./setup.sh
+
+## Usage
+
+    lf-run
+    echo "housing, authority documents, project documentation, exam drill" | lf-run custom
+    lf-evening
+    lf-status
+
+## Commands
+
+| Command | Purpose |
+|---|---|
+| lf-task | Convert brain dump into deterministic task list |
+| lf-run | Create full workflow session |
+| lf-ai | Local Ollama wrapper |
+| lf-email | Clean rough email draft locally |
+| lf-morning | Morning workflow |
+| lf-evening | Evening review |
+| lf-status | Status check |
+| lf-secret-scan | Basic secret/privacy scan |
+
+## Safety
+
+Local Focus OS does not send emails automatically, does not push to GitHub automatically, and does not verify facts by itself.
+
+Human review is required before publishing, sending, submitting or sharing anything.
+
+## Documentation
+
+- German README: README_DE.md
+- Installation guide: docs/INSTALL.md
+- AI Governance: docs/AI_GOVERNANCE.md
+- Architecture: docs/ARCHITECTURE.md
+
+## License
+
+MIT
+
+## Quick Setup
+
+
+## Autonomy Mode
+
+Controlled local autonomy is available:
+
+    lf-autonomy on
+    lf-autonomy status
+    lf-autonomy off
+
+Documentation: docs/AUTONOMY.md
+
+## Why this project matters
+
+Local Focus OS demonstrates practical Linux automation with a clear operational purpose.
+
+It is not just a script collection. It shows how local-first tools can be combined into a small workflow operating system with:
+
+- Bash-based automation
+- systemd user timers
+- Markdown-based reporting
+- local AI integration through Ollama
+- deterministic task routing
+- human review boundaries
+- privacy-first design
+- reproducible installation
+
+The project is useful as a portfolio proof-of-work for IT Operations, Linux Administration, IT Service Management, workflow automation and local AI operations.
+
+## Professional Signal
+
+This project shows the ability to:
+
+- identify operational friction
+- design a repeatable workflow
+- implement automation locally
+- document setup and usage
+- add safety boundaries
+- publish a clean open-source repository
+- operate the workflow through systemd timers
+
+## Positioning
+
+Built by Daniel Massa as proof-of-work for the role profile:
+
+AI-assisted IT Operations and Automation Specialist
+
+Focus areas:
+
+- Linux automation
+- local-first AI
+- IT operations workflows
+- documentation engineering
+- human-in-the-loop automation
+- privacy-aware tooling
+
+## ELIZA Effect Awareness
+
+Local Focus OS explicitly documents the ELIZA effect as a workflow safety risk.
+
+The system does not treat AI output as verified truth or autonomous authority.
+
+Documentation: docs/ELIZA_EFFECT.md
+
+Reproducible Workflows
+
+Local Focus OS keeps workflows reproducible by storing executable commands in bin/lf-*, documenting them in docs/, and writing local reports.
+
+Documentation:
+
+docs/REPRODUCIBLE_WORKFLOWS.md
+docs/PDF_METADATA_WORKFLOW.md
+
+## Scheduled Workflows
+
+Local Focus OS includes scheduled local workflows through systemd user timers.
+
+Documentation: docs/SCHEDULED_WORKFLOWS.md
+
+Control:
+
+    lf-schedule on
+    lf-schedule status
+    lf-schedule off
+
+System Library
+
+Local Focus OS keeps a local system library for stable documentation, runbooks and validation evidence.
+
+Documentation: docs/SYSTEM_LIBRARY.md
+
+Commands:
+
+lf-library refresh
+lf-library status
+lf-library index
+
+
+## Workflow and Document Registry
+
+Local Focus OS maintains a generated registry of all workflows and documentation.
+
+Documentation:
+
+- docs/WORKFLOW_REGISTRY.md
+- docs/DOCUMENT_REGISTRY.md
+- docs/OPERATIONS_INDEX.md
+
+Commands:
+
+    lf-inventory refresh
+    lf-inventory status
+
+Reproducible Software Release
+
+Local Focus OS can be built as a reproducible local software package.
+
+make install
+make test
+make build
+
+Release artifacts are written to:
+
+dist/
+
+Documentation:
+
+docs/SOFTWARE_SPEC.md
+docs/REPRODUCIBLE_BUILD.md
+docs/RELEASE_ENGINEERING.md
+
+## Install from GitHub Repository
 
     git clone https://github.com/DonMassa84/local-focus-os.git
     cd local-focus-os
@@ -16,4 +223,4 @@ After installation:
 Documentation:
 
 - docs/INSTALL_FROM_REPO.md
-- docs/INSTALL_RELEASE.md\n
+- docs/INSTALL_RELEASE.md
