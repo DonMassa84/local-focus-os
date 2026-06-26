@@ -2,7 +2,7 @@
 
 Privacy-first workflow automation for Linux.
 
-Local Focus OS is a local-first, open-source execution system for brain dumps, task routing, daily control, evening review, local AI usage and Markdown-based documentation.
+Local Focus OS is a local-first, open-source execution system for brain dumps, task routing, daily control, evening review, optional local AI usage and Markdown-based documentation.
 
 ## Features
 
@@ -23,12 +23,18 @@ Local Focus OS is a local-first, open-source execution system for brain dumps, t
 - systemd user services
 - Optional: Ollama
 
-## Install
+## Quick Setup
 
-    chmod +x install.sh
-    ./install.sh
+    git clone https://github.com/DonMassa84/local-focus-os.git
+    cd local-focus-os
+    chmod +x setup.sh
+    ./setup.sh
     source ~/.bashrc
     lf-status
+
+## One-Line Setup
+
+    git clone https://github.com/DonMassa84/local-focus-os.git && cd local-focus-os && chmod +x setup.sh && ./setup.sh
 
 ## Usage
 
@@ -55,6 +61,13 @@ Local Focus OS is a local-first, open-source execution system for brain dumps, t
 Local Focus OS does not send emails automatically, does not push to GitHub automatically, and does not verify facts by itself.
 
 Human review is required before publishing, sending, submitting or sharing anything.
+
+## Documentation
+
+- German README: README_DE.md
+- Installation guide: docs/INSTALL.md
+- AI Governance: docs/AI_GOVERNANCE.md
+- Architecture: docs/ARCHITECTURE.md
 
 ## License
 
