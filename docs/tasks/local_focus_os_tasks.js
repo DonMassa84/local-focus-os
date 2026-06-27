@@ -1,5 +1,16 @@
 window.LOCAL_FOCUS_OS_TASKS = [
   {
+    "id": "task_generate_release_campaign_posts",
+    "title": "LinkedIn-Kampagne aus GitHub Releases erzeugen",
+    "priority": "P1",
+    "status": "open",
+    "area": "Career Automation",
+    "kaizenStep": "Proof",
+    "nextAction": "scripts/generate_release_campaign_data.sh ausführen und Campaign Tracker prüfen",
+    "estimatedMinutes": 10,
+    "output": "Dashboard zeigt LinkedIn-Posts aus GitHub Releases"
+  },
+  {
     "id": "task_import_generator_telegram_campaign_data",
     "title": "Generator-/Telegram-Daten in Campaign Tracker importieren",
     "priority": "P1",

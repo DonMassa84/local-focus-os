@@ -329,3 +329,11 @@ Die generierte lokale Campaign-Datei liegt unter:
 Beide privaten Datenbereiche werden nicht versioniert.
 
 [LinkedIn Importer](docs/imports/LINKEDIN_IMPORTER.md)
+
+## Release Campaign Generator
+
+Wenn keine Generator- oder Telegram-Exports vorhanden sind, erzeugt dieser lokale Generator LinkedIn-Kampagnenposts direkt aus den GitHub Releases:
+
+    bash scripts/generate_release_campaign_data.sh
+
+[Release Campaign Generator](docs/campaigns/RELEASE_CAMPAIGN_GENERATOR.md)

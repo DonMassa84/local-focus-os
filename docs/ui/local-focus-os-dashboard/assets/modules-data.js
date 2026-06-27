@@ -137,5 +137,22 @@ window.LOCAL_FOCUS_OS_MODULES = [
       "campaign",
       "local"
     ]
+  },
+  {
+    "title": "Release Campaign Generator",
+    "area": "Career Automation",
+    "status": "published",
+    "what": "Erzeugt LinkedIn-Kampagnenposts automatisch aus den GitHub Releases, wenn keine Generator- oder Telegram-Exports vorhanden sind.",
+    "proof": "Generator-Script und Dokumentation sind im Repository vorhanden; erzeugte Kampagnendaten bleiben lokal.",
+    "action": "Script ausführen, Campaigns im Dashboard öffnen und Posts nach Stage bearbeiten.",
+    "link": "../../docs/campaigns/RELEASE_CAMPAIGN_GENERATOR.md",
+    "tags": [
+      "release",
+      "linkedin",
+      "campaign",
+      "generator",
+      "github",
+      "portfolio"
+    ]
   }
 ];
