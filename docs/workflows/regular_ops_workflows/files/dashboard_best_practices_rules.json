@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "required_panels": [
+    "workflow-catalog","security","hooks","api-status",
+    "timers","git-status","logs","run13","self-improve"
+  ],
+  "forbidden_patterns": [
+    "api_key","token=","secret=","password=",
+    "fonts.googleapis.com","cdn.jsdelivr.net"
+  ],
+  "required_data_files": [
+    "dashboard/data/workflow_catalog.json",
+    "dashboard/data/api_status.json",
+    "dashboard/data/git_status_summary.json"
+  ]
+}
