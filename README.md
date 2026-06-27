@@ -260,3 +260,9 @@ Local Focus OS Priority Tasklist
 Priorisierte Aufgabenliste für die nächsten Local-Focus-OS-Ausbaustufen:
 
 [Local Focus OS Priority Tasklist](docs/project_management/LOCAL_FOCUS_OS_PRIORITY_TASKLIST.md)
+
+## Local Focus OS Dashboard
+
+Grafische Übersicht über Portfolio-Bausteine, Workflow-Module, Release-Nachweise und nächste Integrationsschritte:
+
+[Local Focus OS Dashboard](docs/ui/local-focus-os-dashboard/index.html)
