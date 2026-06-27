@@ -266,3 +266,9 @@ Priorisierte Aufgabenliste für die nächsten Local-Focus-OS-Ausbaustufen:
 Grafische Übersicht über Portfolio-Bausteine, Workflow-Module, Release-Nachweise und nächste Integrationsschritte:
 
 [Local Focus OS Dashboard](docs/ui/local-focus-os-dashboard/index.html)
+
+## Regular Operations Workflows
+
+Kuratierte Workflows für Daily Reports, Guardrail Checks, Reviews, Statuskontrolle und wiederholbare IT-Operations-Routinen:
+
+[Regular Operations Workflows](docs/workflows/regular_ops_workflows/README.md)

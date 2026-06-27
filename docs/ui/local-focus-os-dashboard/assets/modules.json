@@ -7,7 +7,12 @@
     "proof": "Dokumentierte Summary im Repository.",
     "action": "Als CV- und Interview-Baustein nutzen.",
     "link": "../../docs/portfolio/LOCAL_FOCUS_OS_PORTFOLIO_SUMMARY.md",
-    "tags": ["portfolio", "cv", "github", "summary"]
+    "tags": [
+      "portfolio",
+      "cv",
+      "github",
+      "summary"
+    ]
   },
   {
     "title": "Release Proof",
@@ -17,7 +22,12 @@
     "proof": "Release Proof im Repository plus GitHub Releases.",
     "action": "Im technischen Gespräch als Versionierungsnachweis verwenden.",
     "link": "../../docs/proofs/LOCAL_FOCUS_OS_RELEASE_PROOF_v0.2.2.md",
-    "tags": ["release", "proof", "evidence", "github"]
+    "tags": [
+      "release",
+      "proof",
+      "evidence",
+      "github"
+    ]
   },
   {
     "title": "TALK Communication Workflows",
@@ -27,7 +37,12 @@
     "proof": "TALK-Templates wurden als Workflow-Modul übernommen.",
     "action": "Für Jobcenter, Bewerbung, Führung, Konflikte und IHK-Kommunikation nutzen.",
     "link": "../../docs/workflows/talk_communication/templates/01_TALK_Gespraechsbriefing.md",
-    "tags": ["talk", "communication", "templates", "review"]
+    "tags": [
+      "talk",
+      "communication",
+      "templates",
+      "review"
+    ]
   },
   {
     "title": "Priority Tasklist",
@@ -37,27 +52,43 @@
     "proof": "Projektmanagement-Dokument im Repository.",
     "action": "Als operative Steuerung verwenden.",
     "link": "../../docs/project_management/LOCAL_FOCUS_OS_PRIORITY_TASKLIST.md",
-    "tags": ["tasklist", "priority", "execution", "roadmap"]
+    "tags": [
+      "tasklist",
+      "priority",
+      "execution",
+      "roadmap"
+    ]
   },
   {
     "title": "Kaizen Workflow System",
     "area": "Self-Management",
-    "status": "local-pending",
+    "status": "published",
     "what": "Daily Control, Brain Dump, Micro-Commitment, Fokus-Sprints und Weekly Review.",
-    "proof": "Lokales Modul vorhanden oder pending, abhängig vom Git-Status.",
-    "action": "Erst Secret-/PII-Scan sauber machen, dann committen und releasen.",
-    "link": "",
-    "tags": ["kaizen", "daily", "sprint", "review"]
+    "proof": "Kaizen-Modul ist im Repository dokumentiert.",
+    "action": "Für Daily Control, Micro-Commitments, Fokus-Sprints und Weekly Review nutzen.",
+    "link": "../../docs/workflows/kaizen_system/README.md",
+    "tags": [
+      "kaizen",
+      "daily",
+      "sprint",
+      "review"
+    ]
   },
   {
     "title": "Regular Operations Workflows",
     "area": "IT Operations",
-    "status": "local-pending",
+    "status": "published",
     "what": "Kuratierte Betriebsroutinen für Daily Reports, Guardrail Checks, Reviews und Statuskontrolle.",
-    "proof": "Kuratiertes Modul vorhanden oder pending, abhängig vom Git-Status.",
-    "action": "PII-Treffer sanitizen, dann committen und releasen.",
-    "link": "",
-    "tags": ["operations", "guardrail", "daily", "status", "automation"]
+    "proof": "Regular-Ops-Modul ist kuratiert und im Repository dokumentiert.",
+    "action": "Für wiederholbare Betriebsroutinen, Guardrails, Reviews und Statuskontrolle nutzen.",
+    "link": "../../docs/workflows/regular_ops_workflows/README.md",
+    "tags": [
+      "operations",
+      "guardrail",
+      "daily",
+      "status",
+      "automation"
+    ]
   },
   {
     "title": "GitHub Releases",
@@ -67,6 +98,10 @@
     "proof": "GitHub Release-Historie.",
     "action": "Release-Kette als Portfolio-Nachweis verwenden.",
     "link": "https://github.com/DonMassa84/local-focus-os/releases",
-    "tags": ["github", "release", "versioning"]
+    "tags": [
+      "github",
+      "release",
+      "versioning"
+    ]
   }
 ]
