@@ -1,0 +1,266 @@
+/*
+  Shadowmaker Learning Theme
+  Zweck: visuelle Steuerung für Priorität, Fokus, Sprint, Review und Belohnung.
+*/
+
+:root {
+  --trigger-p0: #ff3b3b;
+  --trigger-p1: #ff9f1c;
+  --trigger-p2: #3b82f6;
+  --trigger-p3: #64748b;
+
+  --trigger-focus: #38bdf8;
+  --trigger-sprint: #fb923c;
+  --trigger-review: #a78bfa;
+  --trigger-done: #22c55e;
+  --trigger-calm: #14b8a6;
+
+  --shadowmaker-glow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+/* Grundwirkung: dunkle, reizreduzierte Oberfläche */
+body {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(59, 130, 246, 0.20), transparent 30rem),
+    radial-gradient(circle at 92% 8%, rgba(167, 139, 250, 0.14), transparent 28rem),
+    radial-gradient(circle at 50% 100%, rgba(20, 184, 166, 0.08), transparent 22rem),
+    #070b12 !important;
+}
+
+/* Lernmodus-Panel */
+.learning-panel {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 18px;
+  margin: 0 0 24px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: rgba(12, 18, 31, 0.88);
+  box-shadow: var(--shadow);
+}
+
+.learning-panel h2 {
+  margin: 0 0 8px;
+  letter-spacing: -0.03em;
+}
+
+.learning-panel p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.mode-btn {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: #172033;
+  color: var(--text);
+  font-weight: 900;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mode-btn small {
+  display: block;
+  color: var(--muted);
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.mode-btn.active {
+  outline: 2px solid var(--active-trigger);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--active-trigger) 38%, transparent);
+}
+
+/* Trigger-Legende */
+.trigger-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.trigger-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: #111827;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.trigger-chip::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--chip-color);
+}
+
+/* Lernmodi */
+body.learning-focus {
+  --active-trigger: var(--trigger-focus);
+}
+
+body.learning-sprint {
+  --active-trigger: var(--trigger-sprint);
+}
+
+body.learning-review {
+  --active-trigger: var(--trigger-review);
+}
+
+body.learning-calm {
+  --active-trigger: var(--trigger-calm);
+}
+
+/* Kartenwirkung nach Modus */
+body.learning-focus .task-card {
+  border-color: rgba(56, 189, 248, 0.32);
+}
+
+body.learning-sprint .task-card {
+  border-color: rgba(251, 146, 60, 0.34);
+}
+
+body.learning-review .card {
+  border-color: rgba(167, 139, 250, 0.28);
+}
+
+body.learning-calm .card {
+  box-shadow: none;
+  border-color: rgba(20, 184, 166, 0.20);
+}
+
+/* Prioritätsfarben für Aufgaben */
+.task-card.priority-p0 {
+  border-left: 6px solid var(--trigger-p0);
+}
+
+.task-card.priority-p1 {
+  border-left: 6px solid var(--trigger-p1);
+}
+
+.task-card.priority-p2 {
+  border-left: 6px solid var(--trigger-p2);
+}
+
+.task-card.priority-p3 {
+  border-left: 6px solid var(--trigger-p3);
+}
+
+/* Statusfarben */
+.task-card.status-doing {
+  box-shadow: 0 0 28px rgba(251, 146, 60, 0.22);
+}
+
+.task-card.status-done {
+  border-color: rgba(34, 197, 94, 0.45);
+  opacity: 0.86;
+}
+
+.task-card.status-done h2 {
+  color: var(--trigger-done);
+}
+
+/* Kaizen-Cockpit stärker als Startimpuls */
+.kaizen-cockpit {
+  position: relative;
+  overflow: hidden;
+}
+
+.kaizen-cockpit::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 6px;
+  background: var(--active-trigger, var(--trigger-focus));
+}
+
+.kaizen-cockpit h2 {
+  color: #ffffff;
+}
+
+body.learning-sprint .kaizen-cockpit {
+  animation: sprintPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes sprintPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 rgba(251, 146, 60, 0);
+  }
+  50% {
+    box-shadow: 0 0 34px rgba(251, 146, 60, 0.24);
+  }
+}
+
+/* Buttons: klare Handlungshierarchie */
+button[data-action="highlight"] {
+  background: var(--trigger-p2);
+  color: #06111f;
+}
+
+button[data-action="sprint"] {
+  background: var(--trigger-sprint);
+  color: #180b02;
+}
+
+button[data-action="done"] {
+  border-color: rgba(34, 197, 94, 0.5);
+  color: var(--trigger-done);
+}
+
+button[data-action="doing"] {
+  border-color: rgba(251, 146, 60, 0.5);
+  color: var(--trigger-sprint);
+}
+
+/* Reizreduktion */
+body.learning-calm .hero,
+body.learning-calm .learning-panel,
+body.learning-calm .kaizen-cockpit,
+body.learning-calm .task-form,
+body.learning-calm .strategy,
+body.learning-calm .card {
+  background: rgba(10, 18, 25, 0.92);
+}
+
+body.learning-calm .subtitle,
+body.learning-calm .block p,
+body.learning-calm .hint,
+body.learning-calm .cockpit-line {
+  color: #a7b7c9;
+}
+
+/* Fokusmodus: nur relevante Aufgaben visuell stärker */
+body.learning-focus .task-card:not(.status-done) {
+  transform: translateY(-1px);
+}
+
+body.learning-focus .task-card.priority-p0,
+body.learning-focus .task-card.priority-p1 {
+  box-shadow: 0 0 28px rgba(56, 189, 248, 0.14);
+}
+
+/* Mobile */
+@media (max-width: 860px) {
+  .learning-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .mode-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -278,3 +278,16 @@ Kuratierte Workflows für Daily Reports, Guardrail Checks, Reviews, Statuskontro
 Das Dashboard enthält ein lokales Taskboard mit Kaizen-Steuerung für Daily Highlight, Micro-Commitments, Fokus-Sprints und Markdown-Export:
 
 [Local Focus OS Dashboard](docs/ui/local-focus-os-dashboard/index.html)
+
+## Shadowmaker Learning Theme
+
+Das Dashboard enthält ein reizgesteuertes Lern- und Ausführungsdesign mit Trigger-Farben:
+
+- Rot: P0 / sofortige Kontrolle
+- Orange: Sprint / Startimpuls
+- Blau: Fokus / Deep Work
+- Violett: Review / Strategie
+- Grün: Done / Fortschritt
+- Türkis: Calm / Reizreduktion
+
+[Local Focus OS Dashboard](docs/ui/local-focus-os-dashboard/index.html)
