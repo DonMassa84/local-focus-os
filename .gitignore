@@ -26,3 +26,6 @@ dist/*.tar.gz
 dist/*.sha256
 dist/*.manifest.txt
 dist/*.sbom.txt
+
+# Local-only private dashboard tasks
+docs/tasks/local_private_tasks.js

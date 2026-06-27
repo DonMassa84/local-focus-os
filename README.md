@@ -291,3 +291,11 @@ Das Dashboard enthält ein reizgesteuertes Lern- und Ausführungsdesign mit Trig
 - Türkis: Calm / Reizreduktion
 
 [Local Focus OS Dashboard](docs/ui/local-focus-os-dashboard/index.html)
+
+## Private Task Overlay
+
+Das Dashboard unterstützt lokale private Aufgaben über eine nicht versionierte Datei:
+
+    docs/tasks/local_private_tasks.js
+
+Diese Datei wird per `.gitignore` ausgeschlossen und dient für persönliche Tagesplanung, Kaizen-Steuerung und lokale Aufgabenpriorisierung.

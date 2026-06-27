@@ -33,7 +33,9 @@ const copyExportBtn = document.getElementById("copyExportBtn");
 const exportBox = document.getElementById("exportBox");
 
 const modules = window.LOCAL_FOCUS_OS_MODULES || [];
-const baseTasks = window.LOCAL_FOCUS_OS_TASKS || [];
+const publicTasks = window.LOCAL_FOCUS_OS_TASKS || [];
+const privateTasks = window.LOCAL_FOCUS_OS_PRIVATE_TASKS || [];
+const baseTasks = [...privateTasks, ...publicTasks];
 
 let tasks = loadTasks();
 let kaizen = loadKaizen();
@@ -42,11 +44,25 @@ function normalize(value) {
   return String(value || "").toLowerCase();
 }
 
+function mergeBaseTasks(storedTasks) {
+  const byId = new Map();
+
+  for (const task of baseTasks) {
+    byId.set(task.id, task);
+  }
+
+  for (const task of storedTasks || []) {
+    byId.set(task.id, { ...byId.get(task.id), ...task });
+  }
+
+  return Array.from(byId.values());
+}
+
 function loadTasks() {
   const stored = localStorage.getItem(storageKey);
   if (stored) {
     try {
-      return JSON.parse(stored);
+      return mergeBaseTasks(JSON.parse(stored));
     } catch {
       return baseTasks;
     }
