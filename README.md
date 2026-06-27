@@ -230,3 +230,9 @@ Documentation:
 A portfolio case study is available here:
 
 docs/CASE_STUDY_LOCAL_FOCUS_OS.md
+
+## Portfolio Summary
+
+Eine kompakte Projektbeschreibung für Bewerbungen, GitHub und technische Gespräche liegt hier:
+
+[Local Focus OS Portfolio Summary](docs/portfolio/LOCAL_FOCUS_OS_PORTFOLIO_SUMMARY.md)
