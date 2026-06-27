@@ -242,3 +242,21 @@ Eine kompakte Projektbeschreibung für Bewerbungen, GitHub und technische Gespr�
 Nachweis zur veröffentlichten Version:
 
 [Local Focus OS Release Proof v0.2.2](docs/proofs/LOCAL_FOCUS_OS_RELEASE_PROOF_v0.2.2.md)
+
+## Kaizen Workflow System
+
+Wiederverwendbare Workflows für Daily Control, Micro-Commitments, Fokus-Sprints und Weekly Review:
+
+[Kaizen Workflow System](docs/workflows/kaizen_system/README.md)
+
+Project Management
+
+Priorisierte Aufgabenliste für die nächsten Local-Focus-OS-Ausbaustufen:
+
+Local Focus OS Priority Tasklist
+
+## Project Management
+
+Priorisierte Aufgabenliste für die nächsten Local-Focus-OS-Ausbaustufen:
+
+[Local Focus OS Priority Tasklist](docs/project_management/LOCAL_FOCUS_OS_PRIORITY_TASKLIST.md)
