@@ -103,5 +103,22 @@ window.LOCAL_FOCUS_OS_MODULES = [
       "release",
       "versioning"
     ]
+  },
+  {
+    "title": "LinkedIn Campaign Tracker",
+    "area": "Career Automation",
+    "status": "published",
+    "what": "Dashboard-Ansicht für gepostete, geplante, review-pflichtige und noch offene LinkedIn-Beiträge nach Kampagne.",
+    "proof": "Campaign Tracker, lokale Campaign-Daten und Markdown-Export sind integriert.",
+    "action": "Kampagne öffnen, Stage setzen, offene Posts priorisieren und Wochenstatus exportieren.",
+    "link": "../../docs/campaigns/LINKEDIN_CAMPAIGN_TRACKER.md",
+    "tags": [
+      "linkedin",
+      "campaign",
+      "posted",
+      "content",
+      "career",
+      "tracker"
+    ]
   }
 ];

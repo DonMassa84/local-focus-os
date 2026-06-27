@@ -29,3 +29,6 @@ dist/*.sbom.txt
 
 # Local-only private dashboard tasks
 docs/tasks/local_private_tasks.js
+
+# Local-only LinkedIn campaign tracking data
+docs/campaigns/local_linkedin_campaigns.js

@@ -1,5 +1,16 @@
 window.LOCAL_FOCUS_OS_TASKS = [
   {
+    "id": "task_linkedin_campaign_status_review",
+    "title": "LinkedIn Campaign Status prüfen",
+    "priority": "P1",
+    "status": "open",
+    "area": "Career Automation",
+    "kaizenStep": "Weekly Review",
+    "nextAction": "Campaign Tracker öffnen und Posts nach posted, review, scheduled und to_post sortieren",
+    "estimatedMinutes": 20,
+    "output": "klarer Status: was gepostet wurde und was noch gepostet werden muss"
+  },
+  {
     "id": "task_repo_status_control",
     "title": "Repo-Status prüfen und sauber halten",
     "priority": "P0",

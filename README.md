@@ -299,3 +299,17 @@ Das Dashboard unterstützt lokale private Aufgaben über eine nicht versionierte
     docs/tasks/local_private_tasks.js
 
 Diese Datei wird per `.gitignore` ausgeschlossen und dient für persönliche Tagesplanung, Kaizen-Steuerung und lokale Aufgabenpriorisierung.
+
+## LinkedIn Campaign Tracker
+
+Das Dashboard zeigt LinkedIn-Beiträge nach Kampagne und Status:
+
+- gepostet
+- Review
+- geplant
+- noch posten
+- geparkt
+
+Private Kampagnenstände liegen lokal in `docs/campaigns/local_linkedin_campaigns.js` und werden nicht versioniert.
+
+[LinkedIn Campaign Tracker](docs/campaigns/LINKEDIN_CAMPAIGN_TRACKER.md)

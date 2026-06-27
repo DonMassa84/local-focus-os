@@ -1,0 +1,92 @@
+.campaign-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.campaign-stat {
+  border: 1px solid var(--border);
+  background: rgba(18, 24, 39, 0.88);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.campaign-stat strong {
+  display: block;
+  font-size: 1.8rem;
+}
+
+.campaign-stat span {
+  color: var(--muted);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+
+.campaign-group {
+  margin: 22px 0;
+}
+
+.campaign-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.campaign-header p {
+  color: var(--muted);
+  margin: 6px 0 0;
+}
+
+.campaign-post-card {
+  min-height: 260px;
+}
+
+.badge.stage-posted {
+  background: rgba(34, 197, 94, 0.16);
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.38);
+}
+
+.badge.stage-review {
+  background: rgba(167, 139, 250, 0.16);
+  color: #a78bfa;
+  border-color: rgba(167, 139, 250, 0.38);
+}
+
+.badge.stage-scheduled {
+  background: rgba(56, 189, 248, 0.16);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.38);
+}
+
+.badge.stage-to_post {
+  background: rgba(251, 146, 60, 0.16);
+  color: #fb923c;
+  border-color: rgba(251, 146, 60, 0.38);
+}
+
+.badge.stage-parked {
+  background: rgba(100, 116, 139, 0.16);
+  color: #94a3b8;
+  border-color: rgba(100, 116, 139, 0.38);
+}
+
+.campaign-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.campaign-actions button {
+  padding: 9px 10px;
+}
+
+#campaignExportBox {
+  margin-top: 14px;
+}
