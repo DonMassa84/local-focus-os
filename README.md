@@ -313,3 +313,19 @@ Das Dashboard zeigt LinkedIn-Beiträge nach Kampagne und Status:
 Private Kampagnenstände liegen lokal in `docs/campaigns/local_linkedin_campaigns.js` und werden nicht versioniert.
 
 [LinkedIn Campaign Tracker](docs/campaigns/LINKEDIN_CAMPAIGN_TRACKER.md)
+
+## Generator & Telegram Importer
+
+Lokaler Importer für OpenClaw-LinkedIn-Generator- und Telegram-Bot-Exports in den LinkedIn Campaign Tracker.
+
+Private Importdaten liegen lokal unter:
+
+    docs/imports/local_linkedin_sources/
+
+Die generierte lokale Campaign-Datei liegt unter:
+
+    docs/campaigns/local_linkedin_campaigns.js
+
+Beide privaten Datenbereiche werden nicht versioniert.
+
+[LinkedIn Importer](docs/imports/LINKEDIN_IMPORTER.md)

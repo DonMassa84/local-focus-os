@@ -1,5 +1,16 @@
 window.LOCAL_FOCUS_OS_TASKS = [
   {
+    "id": "task_import_generator_telegram_campaign_data",
+    "title": "Generator-/Telegram-Daten in Campaign Tracker importieren",
+    "priority": "P1",
+    "status": "open",
+    "area": "Career Automation",
+    "kaizenStep": "Regular Ops",
+    "nextAction": "Exportdateien in docs/imports/local_linkedin_sources ablegen und scripts/import_linkedin_campaign_data.sh ausführen",
+    "estimatedMinutes": 20,
+    "output": "Campaign Tracker zeigt importierte Posts nach Kampagne und Stage"
+  },
+  {
     "id": "task_linkedin_campaign_status_review",
     "title": "LinkedIn Campaign Status prüfen",
     "priority": "P1",

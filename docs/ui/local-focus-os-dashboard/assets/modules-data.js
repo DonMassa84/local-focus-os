@@ -120,5 +120,22 @@ window.LOCAL_FOCUS_OS_MODULES = [
       "career",
       "tracker"
     ]
+  },
+  {
+    "title": "Generator & Telegram Importer",
+    "area": "Career Automation",
+    "status": "published",
+    "what": "Importiert lokale Exportdateien aus OpenClaw LinkedIn Generator oder Telegram Bot in den LinkedIn Campaign Tracker.",
+    "proof": "Importer-Script, Import-Inbox und Dokumentation sind im Repository vorhanden; private Importdaten bleiben lokal.",
+    "action": "Exportdateien in docs/imports/local_linkedin_sources ablegen, Import-Script ausführen und Campaigns im Dashboard prüfen.",
+    "link": "../../docs/imports/LINKEDIN_IMPORTER.md",
+    "tags": [
+      "import",
+      "telegram",
+      "linkedin",
+      "generator",
+      "campaign",
+      "local"
+    ]
   }
 ];
