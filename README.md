@@ -236,3 +236,9 @@ docs/CASE_STUDY_LOCAL_FOCUS_OS.md
 Eine kompakte Projektbeschreibung für Bewerbungen, GitHub und technische Gespräche liegt hier:
 
 [Local Focus OS Portfolio Summary](docs/portfolio/LOCAL_FOCUS_OS_PORTFOLIO_SUMMARY.md)
+
+## Release Proof
+
+Nachweis zur veröffentlichten Version:
+
+[Local Focus OS Release Proof v0.2.2](docs/proofs/LOCAL_FOCUS_OS_RELEASE_PROOF_v0.2.2.md)
