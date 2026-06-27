@@ -272,3 +272,9 @@ Grafische Übersicht über Portfolio-Bausteine, Workflow-Module, Release-Nachwei
 Kuratierte Workflows für Daily Reports, Guardrail Checks, Reviews, Statuskontrolle und wiederholbare IT-Operations-Routinen:
 
 [Regular Operations Workflows](docs/workflows/regular_ops_workflows/README.md)
+
+## Taskboard + Kaizen Cockpit
+
+Das Dashboard enthält ein lokales Taskboard mit Kaizen-Steuerung für Daily Highlight, Micro-Commitments, Fokus-Sprints und Markdown-Export:
+
+[Local Focus OS Dashboard](docs/ui/local-focus-os-dashboard/index.html)

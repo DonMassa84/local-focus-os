@@ -13,9 +13,7 @@
   --shadow: 0 18px 55px rgba(0, 0, 0, 0.28);
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -57,6 +55,8 @@ h1 {
   letter-spacing: -0.06em;
 }
 
+h2 { margin: 0 0 10px; }
+
 .subtitle {
   max-width: 760px;
   margin: 18px 0 0;
@@ -65,15 +65,20 @@ h1 {
   line-height: 1.55;
 }
 
-.hero-panel {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  background: rgba(18, 24, 39, 0.78);
+.hero-panel,
+.kaizen-cockpit,
+.task-form,
+.strategy {
+  background: rgba(18, 24, 39, 0.88);
   border: 1px solid var(--border);
   border-radius: 24px;
-  padding: 18px;
   box-shadow: var(--shadow);
+}
+
+.hero-panel {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
   backdrop-filter: blur(12px);
 }
 
@@ -98,27 +103,103 @@ h1 {
   font-weight: 800;
 }
 
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
+
+.tab,
+button {
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 11px 14px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.tab.active,
+button:not(.secondary) {
+  background: var(--accent);
+  color: #08111f;
+  border-color: transparent;
+}
+
+button.secondary {
+  background: #252d40;
+  color: var(--text);
+}
+
+.view { display: none; }
+.view.active { display: block; }
+
+.kaizen-cockpit {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 18px;
+  align-items: center;
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+.cockpit-line {
+  color: var(--muted);
+  margin: 6px 0;
+}
+
+.cockpit-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .control-bar {
   display: grid;
-  grid-template-columns: 1fr 210px;
+  grid-template-columns: 1fr 190px 190px;
   gap: 12px;
-  margin: 26px 0 14px;
+  margin: 18px 0 14px;
 }
 
 input,
-select {
+select,
+textarea {
   width: 100%;
   border: 1px solid var(--border);
   border-radius: 16px;
   background: rgba(18, 24, 39, 0.92);
   color: var(--text);
-  padding: 15px 16px;
+  padding: 14px 16px;
   outline: none;
 }
 
+textarea {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  line-height: 1.45;
+}
+
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   border-color: var(--accent);
+}
+
+.task-form {
+  padding: 18px;
+  margin: 18px 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1.5fr 100px 100px auto;
+  gap: 10px;
+}
+
+.hint {
+  margin: 10px 0 0;
+  color: var(--muted);
 }
 
 .legend {
@@ -144,21 +225,24 @@ select:focus {
 }
 
 .dot.published,
-.badge.published {
+.badge.published,
+.badge.done {
   background: rgba(74, 222, 128, 0.16);
   color: var(--good);
   border-color: rgba(74, 222, 128, 0.38);
 }
 
 .dot.local-pending,
-.badge.local-pending {
+.badge.local-pending,
+.badge.doing {
   background: rgba(250, 204, 21, 0.16);
   color: var(--warn);
   border-color: rgba(250, 204, 21, 0.38);
 }
 
 .dot.external,
-.badge.external {
+.badge.external,
+.badge.open {
   background: rgba(56, 189, 248, 0.16);
   color: var(--info);
   border-color: rgba(56, 189, 248, 0.38);
@@ -180,12 +264,16 @@ select:focus {
 .card {
   display: flex;
   flex-direction: column;
-  min-height: 330px;
+  min-height: 315px;
   background: rgba(18, 24, 39, 0.88);
   border: 1px solid var(--border);
   border-radius: 24px;
   padding: 20px;
   box-shadow: var(--shadow);
+}
+
+.task-card {
+  min-height: 280px;
 }
 
 .card-top {
@@ -216,13 +304,11 @@ select:focus {
 
 .card h2 {
   margin: 0 0 12px;
-  font-size: 1.28rem;
+  font-size: 1.24rem;
   letter-spacing: -0.02em;
 }
 
-.block {
-  margin: 10px 0;
-}
+.block { margin: 10px 0; }
 
 .block strong {
   display: block;
@@ -252,6 +338,13 @@ select:focus {
   font-size: 0.78rem;
 }
 
+.card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 16px;
+}
+
 .card a,
 .disabled-link {
   display: inline-flex;
@@ -276,13 +369,6 @@ select:focus {
 .strategy {
   margin-top: 24px;
   padding: 22px;
-  background: rgba(18, 24, 39, 0.88);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-}
-
-.strategy h2 {
-  margin: 0 0 8px;
 }
 
 .strategy p {
@@ -291,9 +377,18 @@ select:focus {
   line-height: 1.55;
 }
 
-@media (max-width: 760px) {
+.export-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 860px) {
   .hero,
-  .control-bar {
+  .control-bar,
+  .form-grid,
+  .kaizen-cockpit {
     grid-template-columns: 1fr;
   }
 

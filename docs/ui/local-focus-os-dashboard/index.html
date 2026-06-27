@@ -13,8 +13,8 @@
         <p class="eyebrow">Local-first Workflow System</p>
         <h1>Local Focus OS Dashboard</h1>
         <p class="subtitle">
-          Portfoliofähige Übersicht für IT Operations, Linux Automation, AI Governance,
-          TALK-Kommunikation, Kaizen-Selbststeuerung und regelmäßige Betriebsroutinen.
+          Steuerzentrale für Portfolio, Releases, Workflow-Module, Aufgaben und Kaizen-Ausführung.
+          Lokal, statisch, reproduzierbar und ohne externe Abhängigkeiten.
         </p>
       </div>
 
@@ -24,45 +24,124 @@
           <small>published</small>
         </div>
         <div class="metric">
-          <span id="pendingCount">0</span>
-          <small>pending</small>
+          <span id="openTaskCount">0</span>
+          <small>open tasks</small>
         </div>
         <div class="metric">
-          <span id="moduleCount">0</span>
-          <small>modules</small>
+          <span id="doneTaskCount">0</span>
+          <small>done</small>
         </div>
       </section>
     </header>
 
-    <section class="control-bar">
-      <input id="searchInput" type="search" placeholder="Module suchen: kaizen, talk, release, ops …">
-      <select id="statusFilter">
-        <option value="all">Alle Status</option>
-        <option value="published">Published</option>
-        <option value="local-pending">Local pending</option>
-        <option value="external">External</option>
-        <option value="missing">Missing</option>
-      </select>
+    <nav class="tabs" aria-label="Dashboard Bereiche">
+      <button class="tab active" data-view="tasks">Tasks + Kaizen</button>
+      <button class="tab" data-view="modules">Modules</button>
+      <button class="tab" data-view="export">Export</button>
+    </nav>
+
+    <section id="view-tasks" class="view active">
+      <section class="kaizen-cockpit">
+        <div>
+          <p class="eyebrow">Kaizen Cockpit</p>
+          <h2>Heute zählt sichtbarer Fortschritt.</h2>
+          <p id="dailyHighlight" class="cockpit-line">Noch kein Daily Highlight gesetzt.</p>
+          <p id="activeSprint" class="cockpit-line">Kein aktiver Sprint.</p>
+        </div>
+
+        <div class="cockpit-actions">
+          <button id="clearKaizenBtn" class="secondary">Kaizen reset</button>
+          <button id="exportTodayBtn">Heute exportieren</button>
+        </div>
+      </section>
+
+      <section class="control-bar">
+        <input id="taskSearchInput" type="search" placeholder="Aufgaben suchen: kaizen, README, release, dashboard …">
+        <select id="taskPriorityFilter">
+          <option value="all">Alle Prioritäten</option>
+          <option value="P0">P0</option>
+          <option value="P1">P1</option>
+          <option value="P2">P2</option>
+          <option value="P3">P3</option>
+        </select>
+        <select id="taskStatusFilter">
+          <option value="all">Alle Status</option>
+          <option value="open">Open</option>
+          <option value="doing">Doing</option>
+          <option value="done">Done</option>
+        </select>
+      </section>
+
+      <section class="task-form">
+        <h2>Neue Aufgabe</h2>
+        <div class="form-grid">
+          <input id="newTaskTitle" type="text" placeholder="Aufgabe">
+          <input id="newTaskNextAction" type="text" placeholder="Nächste kleinste Aktion">
+          <select id="newTaskPriority">
+            <option value="P0">P0</option>
+            <option value="P1" selected>P1</option>
+            <option value="P2">P2</option>
+            <option value="P3">P3</option>
+          </select>
+          <input id="newTaskMinutes" type="number" min="1" max="180" value="25">
+          <button id="addTaskBtn">Aufgabe hinzufügen</button>
+        </div>
+        <p class="hint">
+          Neue Aufgaben werden nur lokal im Browser gespeichert. Für GitHub-Commit später Export nutzen.
+        </p>
+      </section>
+
+      <section id="taskCards" class="grid task-grid" aria-live="polite"></section>
     </section>
 
-    <section class="legend">
-      <span><i class="dot published"></i> Published</span>
-      <span><i class="dot local-pending"></i> Local pending</span>
-      <span><i class="dot external"></i> External</span>
-      <span><i class="dot missing"></i> Missing</span>
+    <section id="view-modules" class="view">
+      <section class="control-bar">
+        <input id="moduleSearchInput" type="search" placeholder="Module suchen: kaizen, talk, release, ops …">
+        <select id="moduleStatusFilter">
+          <option value="all">Alle Status</option>
+          <option value="published">Published</option>
+          <option value="local-pending">Local pending</option>
+          <option value="external">External</option>
+          <option value="missing">Missing</option>
+        </select>
+      </section>
+
+      <section class="legend">
+        <span><i class="dot published"></i> Published</span>
+        <span><i class="dot local-pending"></i> Local pending</span>
+        <span><i class="dot external"></i> External</span>
+        <span><i class="dot missing"></i> Missing</span>
+      </section>
+
+      <section id="moduleCards" class="grid" aria-live="polite"></section>
     </section>
 
-    <section id="cards" class="grid" aria-live="polite"></section>
+    <section id="view-export" class="view">
+      <section class="strategy">
+        <h2>Kaizen Export</h2>
+        <p>
+          Exportiere deine Aufgaben als Markdown. Das Dashboard schreibt bewusst nicht direkt ins Dateisystem.
+          Dadurch bleibt es sicher, lokal und GitHub-kompatibel.
+        </p>
+        <textarea id="exportBox" rows="16" spellcheck="false"></textarea>
+        <div class="export-actions">
+          <button id="generateExportBtn">Markdown erzeugen</button>
+          <button id="copyExportBtn" class="secondary">In Zwischenablage kopieren</button>
+        </div>
+      </section>
+    </section>
 
     <section class="strategy">
       <h2>Execution Rule</h2>
       <p>
-        Keine Massendumps. Keine privaten Logs. Keine Secrets. Erst sanitizen, dann committen,
-        dann releasen. Jeder Baustein muss erklärbar, reproduzierbar und portfoliofähig sein.
+        Erst Aufgabe klein machen. Dann Micro-Commitment. Dann Sprint. Dann sichtbarer Output.
+        Keine Massendumps, keine privaten Logs, keine Secrets.
       </p>
     </section>
   </main>
 
+  <script src="assets/modules-data.js"></script>
+  <script src="../../tasks/local_focus_os_tasks.js"></script>
   <script src="assets/app.js"></script>
 </body>
 </html>
