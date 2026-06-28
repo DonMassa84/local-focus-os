@@ -70,3 +70,7 @@ clean:
 
 install-from-repo:
 	@./install.sh
+
+.PHONY: agent-doctor
+agent-doctor:
+	@bash scripts/agent-doctor.sh

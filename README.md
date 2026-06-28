@@ -337,3 +337,25 @@ Wenn keine Generator- oder Telegram-Exports vorhanden sind, erzeugt dieser lokal
     bash scripts/generate_release_campaign_data.sh
 
 [Release Campaign Generator](docs/campaigns/RELEASE_CAMPAIGN_GENERATOR.md)
+
+## AI Agent Knowledge
+
+Dieses Repository enthält ein agentenfähiges Betriebsmodell nach 6 Komponenten:
+
+- Model
+- Tools
+- Memory
+- Audio
+- Guardrails
+- Orchestration
+
+Siehe:
+
+- docs/agent/AI_AGENT_KNOWLEDGE.md
+- docs/agent/AI_AGENT_MASTER_PROMPTS.md
+- docs/agent/REPO_AGENT_MAPPING.md
+
+Prüfung:
+
+    make agent-doctor
+
